@@ -1,200 +1,135 @@
-# 俄罗斯方块
-## 介绍
-基于SDL2实现的经典俄罗斯方块游戏，包含移动、降落、消除等基本功能。
+# Tetris SDL2
+
+一个基于 **SDL2 + C++17** 的经典俄罗斯方块游戏，采用组件化的 Actor 架构，支持幽灵块预览、硬降、软降等现代方块游戏特性。
+
+![游戏截图](image/README/screenshot.png)
+
+## 特性亮点
+
+- 🎮 **经典玩法**：移动、旋转、软降、锁定、消行一应俱全
+- 👻 **幽灵块（Ghost Piece）**：实时显示方块落点，提升操作精度
+- ⬇️ **硬降（Hard Drop）**：按空格键瞬间落到底部并锁定
+- 🧩 **Actor 组件架构**：`Game` 统一调度 `Board` / `Piece`，逻辑清晰、易于扩展
+- ⚡ **性能优化**：幽灵块在移动/旋转时预计算并缓存，避免每帧重复计算
+- 🖥️ **跨平台构建**：使用 CMake 管理，Windows 下可直接用 MinGW 编译
 
 ## 技术栈
-使用C++语言编写，借助SDL2接口实现游戏基本功能，并采用CMake工具编译。
 
-## 代码实现
-### 基本架构
-Game类实现游戏的初始化、循环和退出。而游戏的循环有包括输入处理、游戏更新以及图形渲染。
-```cpp
-public:
-bool Initialize();
-void RunLoop();
-void Shutdown();
-private:
-void ProcessInput();
-void UpdateGame();
-void GenerateOutput();
-```
-Actor类对游戏对象进行管理和实现。通过虚函数的方式，实现多态。
-```cpp
-public:
-virtual void Update(float deltaTime);
-virtual void ProcessInput(const uint8_t* keyState);
-virtual void Draw(SDL_Renderer* renderer);
-```
-在Game类中还会提供Actor对象的增删方法，并在Actor对象构造和析构的时候调用，实现资源的自动管理。
-```cpp
-void AddActor(class Actor* actor);
-void RemoveActor(class Actor* actor);
-```
-```cpp
-Actor::Actor(Game* game)
-:mGame(game)
-{
-    mGame->AddActor(this);
-}
+| 项目 | 说明 |
+|------|------|
+| 平台 | Windows |
+| 图形/输入/窗口 | SDL2 |
+| 构建工具 | CMake 4.3.2 |
+| 编译器 | MinGW-w64 g++ 16.1.0 |
 
-Actor::~Actor(){
-    mGame->RemoveActor(this);
-}
-```
-### 逻辑实现
-游戏可拆分为两个部分，Board作为背景，Piece作为玩家操作的方块。
-#### Board
-Board作为背景，即已经固定的方块，不需要一直更新，但需要一直绘制。通过mGrid标记已经固定的方块，并设置相应的颜色编号，共7种颜色。
-```cpp
-public:
-void Draw(SDL_Renderer* renderer) override;
-private:
-std::vector<std::vector<int>> mGrid;
-const SDL_Color mColors[7];
-```
-Board还需实现基本功能，即碰撞检测、消除行、重置等等。
-```cpp
-bool IsValid(const Vector2 blocks[4]) const;
-void Lock(const Vector2 blocks[4], int type);
-void ClearLines();
-void Reset();
-```
-碰撞检测借助mGrid查看Piece传入的下一帧blocks所在处是否超界，或与mGrid标记的地方（即锁住的方块）重合。
-```cpp
-bool Board::IsValid(const Vector2 blocks[4]) const {
-    for(int i=0;i<4;++i){
-        if(blocks[i].x<0||
-           blocks[i].x>=mColumns||
-           blocks[i].y>=mRows) return false;
-        if(blocks[i].y>=0&&
-           mGrid[blocks[i].y][blocks[i].x]!=-1) return false;
-    }
-    return true;
-}
-```
-方块的锁定则直接将blocks在mGrid上标记即可。
-```cpp
-void Board::Lock(const Vector2 blocks[4], int type){
-    for(int i=0;i<4;++i){
-        if(blocks[i].y>=0) mGrid[blocks[i].y][blocks[i].x]=type;
-    }
-}
-```
-当行满时，进行消除并将上面的行向下移。通过erase删除对应行，并将开头插入一行空值。
-```cpp
-void Board::ClearLines(){
-    for(int y=mRows-1;y>=0;--y){
-        bool full=true;
-        for(int x=0;x<mColumns;++x){
-            if(mGrid[y][x]==-1){
-                full=false;
-                break;
-            }
-        }
-        if(full){
-            mGrid.erase(mGrid.begin()+y);
-            mGrid.insert(mGrid.begin(), std::vector<int>(mColumns, -1));
-            ++y;
-        }
-    }
-}
-```
-重置则清空mGrid即可，使用assign重新赋值。
-```cpp
-void Board::Reset(){
-    mGrid.assign(mRows, std::vector<int>(mColumns, -1));
-}
-```
-#### Piece
-Piece作为玩家控制的方块，需要对输入进行处理，还需要一直更新并绘制。
-```cpp
-void Update(float deltaTime) override;
-void ProcessInput(const uint8_t* keyState) override;
-void Draw(SDL_Renderer* renderer) override;
-```
-Piece由mBlocks构成，其不同的值对应不同的形状，从常量SHAPES直接获取。
-```cpp
-const Vector2 SHAPES[7][4]={
-    {{0,-1},{0,0},{0,1},{0,2}},
-    {{-1,0},{0,0},{1,0},{0,1}},
-    {{0,0},{1,0},{0,1},{1,1}},
-    {{0,-1},{0,0},{0,1},{1,1}},
-    {{0,-1},{0,0},{0,1},{-1,1}},
-    {{1,0},{0,0},{0,1},{-1,1}},
-    {{-1,0},{0,0},{0,1},{1,1}}
-};
-```
-Piece在绘制时，可通过GetGame()->GetBoard()获取Board对象，然后通过GetColors获取对应颜色。
-```cpp
-const SDL_Color* GetColors() const {return mColors;}
+## 项目结构
+
+```text
+tetris-sdl2/
+├── CMakeLists.txt      # CMake 构建配置
+├── README.md           # 项目说明
+├── Src/
+│   ├── Main.cpp        # 程序入口
+│   └── Game/
+│       ├── Game.h/.cpp     # 游戏主循环与 Actor 管理
+│       ├── Actor.h/.cpp    # 游戏对象基类
+│       ├── Board.h/.cpp    # 棋盘、碰撞检测、消行
+│       └── Piece.h/.cpp    # 当前下落方块、输入、旋转、幽灵块
+├── build/              # 构建输出目录
+└── image/README/       # 项目截图
 ```
 
-## 编译运行
-在终端上编译调试程序。
-```shell
+## 快速开始
+
+### 环境要求
+
+- Windows / Linux / macOS
+- 安装 [CMake](https://cmake.org/download/) 与 C++ 编译器
+- 下载 [SDL2 开发库](https://github.com/libsdl-org/SDL/releases)，并确保路径与 `CMakeLists.txt` 中的 `SDL2_DIR` 一致
+
+> **注意**：当前 `CMakeLists.txt` 中硬编码了 Windows 路径 `D:/SDL2`，请根据你的实际环境修改。
+
+### 构建（Windows MinGW）
+
+```bash
 cmake -G "MinGW Makefiles" -B build
 cmake --build build
 ```
-确保build中有SDL2.dll，运行游戏。
-```shell
-./build/Tetris
+
+### 运行
+
+构建完成后，`SDL2.dll` 会通过 `CMakeLists.txt` 中的 `add_custom_command` 自动复制到 `build/` 目录，然后执行：
+
+```bash
+./build/tetris.exe
 ```
-游戏启动和退出正常，方块的移动、旋转、软降控制正常，方块的锁定和行消除正常，方块生成和绘制正常。运行部分截图如下。
 
-![1782972506405](image/README/1782972506405.png)
+## 操作说明
 
-## 新增功能
+| 按键 | 功能 |
+|------|------|
+| `A` | 左移 |
+| `D` | 右移 |
+| `S` | 软降（加速下落） |
+| `W` | 顺时针旋转 |
+| `Space` | 硬降 |
+| `Esc` | 退出游戏 |
+
+## 架构设计
+
+### 主循环
+
+```
+ProcessInput() -> UpdateGame() -> GenerateOutput()
+```
+
+`Game` 类负责 SDL 初始化、固定帧率主循环以及 Actor 生命周期的统一管理。
+
+### Actor 模式
+
+`Actor` 作为所有游戏对象的基类，提供三个核心虚函数：
+
+- `Update(float deltaTime)` —— 每帧更新逻辑
+- `ProcessInput(const uint8_t* keyState)` —— 处理输入
+- `Draw(SDL_Renderer* renderer)` —— 渲染
+
+`Actor` 构造时自动注册到 `Game`，析构时自动注销，避免手动管理对象列表。
+
+### Board & Piece
+
+- **Board**：使用 `mGrid` 记录已锁定方块，负责碰撞检测、行消除与棋盘重置
+- **Piece**：维护当前下落方块的 4 个格子坐标，处理玩家输入、自动下落、旋转与幽灵块计算
+
 ### 幽灵块与硬降
-硬降，即按压空格后，方块直接下落至底。与幽灵块（方块在底下的实时投影）的实现如出一辙。添加私有成员mGhost，并在Spawn调用时以及方块位置角度发生变化时重新计算幽灵块位置。
-```cpp
-// 计算下落到底的位置（幽灵块）
-void Piece::CalculateGhost(Vector2 ghost[4]) const{
-    for(int i=0;i<4;++i) ghost[i]=mBlocks[i];
 
-    Board* board=GetGame()->GetBoard();
-    while(true){
-        Vector2 nxt[4];
-        for(int i=0;i<4;++i) nxt[i]={ghost[i].x, ghost[i].y+1};
-        if(!board->IsValid(nxt)) break;
-        for(int i=0;i<4;++i) ghost[i]=nxt[i];
-    }
-}
-```
-```cpp
-void Piece::Spawn(){
-    // 生成mBlocks...
-    
-    CalculateGhost(mGhost);     // 提前计算幽灵块位置
-}
-```
-```cpp
-// 水平移动或旋转后一次，需重新计算幽灵块
-if((A&&!mPrevA)&&(D&&!mPrevD)&&!(W&&!mPrevW));
-else CalculateGhost(mGhost);
-```
-通过提前与减少不必要计算，来提高游戏性能。在硬降与绘制发生时不必重复计算，通过mGhost直接完成。
-```cpp
-// 硬降，通过幽灵块直接获取降落位置
-if(Space&&!mPrevSpace){
-    for(int i=0;i<4;++i) mBlocks[i]=mGhost[i];
+`Piece` 在生成、移动或旋转后调用 `CalculateGhost()` 预计算底部投影，并缓存到 `mGhost` 中。硬降时直接复用该结果，避免重复碰撞检测：
 
+```cpp
+if(Space && !mPrevSpace){
+    for(int i = 0; i < 4; ++i) mBlocks[i] = mGhost[i];
     board->Lock(mBlocks, mType);
     board->ClearLines();
     Spawn();
 }
 ```
-```cpp
-// 绘制幽灵块
-if(mGhost[i].y<0) continue;     // 如果mGhost[i].y小于0，则mBlocks[i].y也会小于0
-SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);  // 混合模式，绘制时与底色混合
-SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, 80);
-rc.x=mGhost[i].x*cell+1;
-rc.y=mGhost[i].y*cell+1;
-rc.w=cell-2;
-rc.h=cell-2;
-SDL_RenderFillRect(renderer, &rc);
-SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);   // 恢复正常模式，绘制实体块
-```
-下面是新增功能部分截图。
 
-![1783002077250](image/README/1783002077250.png)
+![幽灵块与硬降](image/README/ghost-piece.png)
+
+## 注意事项
+
+1. **SDL2 路径**：`CMakeLists.txt` 中 `set(SDL2_DIR D:/SDL2)` 为 Windows 默认安装路径，构建前请确认或修改。
+2. **SDL2.dll**：构建后会通过 CMake 后处理命令自动复制到 `build/` 目录；若路径不同，请修改 `CMakeLists.txt` 中的 `add_custom_command`。
+3. **主函数**：`Main.cpp` 中使用 `#undef main` 取消 SDL 对 `main` 的宏重定义，保证跨平台兼容。
+4. **游戏结束**：当前实现为棋盘满时自动清空重置，未做记分与等级系统，可作为后续扩展方向。
+
+## 后续可扩展
+
+- [ ] 计分系统与等级加速
+- [ ] 下一个方块预览
+- [ ] 暂停/重新开始菜单
+- [ ] 音效与背景音乐
+- [ ] 更完善的旋转系统（SRS）与踢墙（Wall Kick）
+
+## 许可证
+
+本项目仅供学习交流使用。

@@ -1,5 +1,5 @@
 #include"Game/Game.h"
-#undef main
+#undef main  // SDL 在 Windows 下会重定义 main，需取消以使用标准入口
 
 int main(int argc, char** argv){
     Game game;

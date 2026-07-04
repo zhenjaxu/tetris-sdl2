@@ -22,9 +22,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_DIR}/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${SDL2_DIR}/lib)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
 
-# add_custom_command(
-#     TARGET ${PROJECT_NAME} POST_BUILD
-#     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#     "D:/SDL2/bin/SDL2.dll"
-#     $<TARGET_FILE_DIR:${PROJECT_NAME}>
-# )
+# 构建完成后自动将 SDL2.dll 复制到输出目录
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "D:/SDL2/bin/SDL2.dll"
+    $<TARGET_FILE_DIR:${PROJECT_NAME}>
+)
