@@ -12,6 +12,7 @@ set(SRC_FILES
     Src/Game/Piece.cpp
 )
 
+# SDL2路径
 set(SDL2_DIR D:/SDL2)
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
@@ -21,11 +22,3 @@ target_include_directories(${PROJECT_NAME} PRIVATE Src/Game)
 target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_DIR}/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${SDL2_DIR}/lib)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
-
-# 构建完成后自动将 SDL2.dll 复制到输出目录
-add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "D:/SDL2/bin/SDL2.dll"
-    $<TARGET_FILE_DIR:${PROJECT_NAME}>
-)
