@@ -1,0 +1,10 @@
+**/bulid/
+bulid/
+*.dll
+*.exe
+*.o
+*.obj
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+CMakeFiles/
