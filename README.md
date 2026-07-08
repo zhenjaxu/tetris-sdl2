@@ -9,7 +9,7 @@
 - **固定时间步长游戏循环**：逻辑更新与渲染帧率解耦，确保软降/硬降速度稳定，不受帧率波动影响
 - **输入系统双模式**：边缘触发（A/D/W/空格）与持续触发（S 软降），通过 SDL_GetKeyboardState 状态检测实现
 - **幽灵块预计算缓存**：移动/旋转时预计算下落到底位置并缓存，避免硬降与绘制时重复碰撞检测
-- **Actor-Component 架构**：Game 统一调度 Board/Piece 生命周期，构造自动注册、析构自动注销
+- **Actor 架构**：Game 统一调度 Board/Piece 生命周期，构造自动注册、析构自动注销
 - **跨平台构建**：CMake + MinGW，支持 Windows/Linux 编译
 
 ## 技术栈
@@ -26,16 +26,13 @@
 ```text
 tetris-sdl2/
 ├── CMakeLists.txt      # CMake 构建配置
-├── README.md           # 项目说明
-├── Src/
-│   ├── Main.cpp        # 程序入口
-│   └── Game/
-│       ├── Game.h/.cpp     # 游戏主循环与 Actor 管理
-│       ├── Actor.h/.cpp    # 游戏对象基类
-│       ├── Board.h/.cpp    # 棋盘、碰撞检测、消行
-│       └── Piece.h/.cpp    # 当前下落方块、输入、旋转、幽灵块
-├── build/              # 构建输出目录
-└── image/README/       # 项目截图
+└── Src/
+    ├── Main.cpp        # 程序入口
+    └── Game/
+        ├── Game.h/.cpp     # 游戏主循环与 Actor 管理
+        ├── Actor.h/.cpp    # 游戏对象基类
+        ├── Board.h/.cpp    # 棋盘、碰撞检测、消行
+        └── Piece.h/.cpp    # 当前下落方块、输入、旋转、幽灵块
 ```
 
 ## 快速开始
@@ -120,15 +117,3 @@ if(Space && !mPrevSpace){
 2. **SDL2.dll**：构建后会通过 CMake 后处理命令自动复制到 `build/` 目录；若路径不同，请修改 `CMakeLists.txt` 中的 `add_custom_command`。
 3. **主函数**：`Main.cpp` 中使用 `#undef main` 取消 SDL 对 `main` 的宏重定义，保证跨平台兼容。
 4. **游戏结束**：当前实现为棋盘满时自动清空重置，未做记分与等级系统，可作为后续扩展方向。
-
-## 后续可扩展
-
-- [ ] 计分系统与等级加速
-- [ ] 下一个方块预览
-- [ ] 暂停/重新开始菜单
-- [ ] 音效与背景音乐
-- [ ] 更完善的旋转系统（SRS）与踢墙（Wall Kick）
-
-## 许可证
-
-本项目仅供学习交流使用。
