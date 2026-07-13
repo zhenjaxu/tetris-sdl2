@@ -11,10 +11,10 @@ public:
 
     void Draw(SDL_Renderer* renderer) override;
 
-    bool IsValid(const Vector2 blocks[4]) const;  // 碰撞检测：是否越界或与已固定方块重叠
-    void Lock(const Vector2 blocks[4], int type); // 将当前方块锁定到棋盘上
-    void ClearLines();                            // 消除已满的行
-    void Reset();                                 // 清空棋盘
+    bool IsValid(const Vector2 blocks[4]) const;        // 碰撞检测：是否越界或与已固定方块重叠
+    void Lock(const Vector2 blocks[4], int type);       // 将当前方块锁定到棋盘上
+    void ClearLines();                                      // 消除已满的行
+    void Reset();                                           // 清空棋盘
 
     int GetColumns() const {return mColumns;}
     int GetRows() const {return mRows;}

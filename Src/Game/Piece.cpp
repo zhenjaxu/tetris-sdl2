@@ -16,7 +16,6 @@ const Vector2 SHAPES[7][4]={
     {{-1,0},{0,0},{0,1},{1,1}}
 };
 
-// speed：水平/旋转响应速度相关；dropSpeed：自动下落间隔
 Piece::Piece(Game* game, float speed, float dropSpeed)
 :Actor(game)
 ,mPosition(Vector2{0,0})
@@ -30,7 +29,7 @@ Piece::Piece(Game* game, float speed, float dropSpeed)
 ,mDropAccumulate(0.0f)
 {
     srand((unsigned)time(nullptr));
-    Spawn(); // 构造时立即生成第一个方块
+    Spawn();
 }
 
 void Piece::Spawn(){
@@ -49,6 +48,7 @@ void Piece::Spawn(){
 
 void Piece::ProcessInput(const uint8_t* keyState){
     Vector2 nxt[4];           // 存储试探性移动/旋转后的方块位置
+    
     Board* board=GetGame()->GetBoard();
 
     bool A=keyState[SDL_SCANCODE_A];
