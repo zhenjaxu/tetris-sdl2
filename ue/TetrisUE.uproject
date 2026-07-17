@@ -1,0 +1,13 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "4.27",
+	"Category": "",
+	"Description": "Unreal Engine 4 C++ Tetris implementation based on the SDL2 version",
+	"Modules": [
+		{
+			"Name": "TetrisUE",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
