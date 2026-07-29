@@ -1,8 +1,9 @@
-#include"Game.h"
-#include"Actor.h"
-#include"Board.h"
-#include"Piece.h"
-#include<algorithm>
+#include "Game.h"
+#include "Actor.h"
+#include "Board.h"
+#include "Piece.h"
+#include "Config.h"
+#include <algorithm>
 
 // 初始化窗口、渲染器、Actor 容器与游戏配置参数
 Game::Game()
@@ -11,9 +12,6 @@ Game::Game()
 ,mIsRunning(true)
 ,mBoard(nullptr)
 ,mPiece(nullptr)
-,mBoardColumns(10)
-,mBoardRows(20)
-,mBoardCell(30.0f)
 ,mTicksCount(0)
 {}
 
@@ -25,7 +23,8 @@ bool Game::Initialize(){
     }
 
     // 窗口尺寸由棋盘列数、行数与格子大小决定
-    mWindow=SDL_CreateWindow("Tetris", 200, 100, mBoardColumns*mBoardCell, mBoardRows*mBoardCell, 0);
+    mWindow=SDL_CreateWindow("Tetris", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
+        Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT, 0);
     if(!mWindow){
         SDL_Log("Failed to create window: %s", SDL_GetError());
         return false;
@@ -81,7 +80,7 @@ void Game::ProcessInput(){
 
 void Game::UpdateGame(){
     // 固定约 60 FPS 的主循环节奏
-    while(!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount+16));
+    while(!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount+Config::TICK_DT));
     float deltaTime=(SDL_GetTicks()-mTicksCount)/1000.0f;
     // 防止断点/卡顿导致 deltaTime 过大
     if(deltaTime>0.05f) deltaTime=0.05f;
@@ -92,8 +91,11 @@ void Game::UpdateGame(){
 
 void Game::GenerateOutput(){
     // 清屏为深色背景
-    SDL_SetRenderDrawColor(mRenderer, 30, 30, 30, 255);
+    SDL_SetRenderDrawColor(mRenderer, 10, 10, 10, 255);
     SDL_RenderClear(mRenderer);
+    SDL_SetRenderDrawColor(mRenderer, 30, 30, 30, 255);
+    SDL_Rect rc = {0, 0, (int)Config::BOARD_WIDTH, (int)Config::BOARD_HEIGHT};
+    SDL_RenderFillRect(mRenderer, &rc);
 
     // 先绘制已固定的 Board，再绘制当前活动 Piece
     mBoard->Draw(mRenderer);
@@ -103,9 +105,8 @@ void Game::GenerateOutput(){
 }
 
 void Game::LoadData(){
-    mBoard=new Board(this, mBoardColumns, mBoardRows, mBoardCell);
-
-    mPiece=new Piece(this, 0.5f, 0.1f);
+    mBoard=new Board(this);
+    mPiece=new Piece(this);
 }
 
 void Game::UnloadData(){

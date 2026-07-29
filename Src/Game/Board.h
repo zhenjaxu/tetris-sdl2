@@ -7,7 +7,7 @@
 // 通过 mGrid 记录每个格子的状态，-1 表示空，其他数字对应方块颜色
 class Board:public Actor{
 public:
-    Board(class Game* game, int columns, int rows, int cell);
+    Board(class Game* game);
 
     void Draw(SDL_Renderer* renderer) override;
 

@@ -1,12 +1,13 @@
-#include"Board.h"
-#include"Game.h"
+#include "Board.h"
+#include "Game.h"
+#include "Config.h"
 
 // 初始化棋盘尺寸、7 种方块颜色，并清空棋盘
-Board::Board(Game* game, int columns, int rows, int cell)
+Board::Board(Game* game)
 :Actor(game)
-,mColumns(columns)
-,mRows(rows)
-,mCell(cell)
+,mColumns(Config::BOARD_COLUMN)
+,mRows(Config::BOARD_ROW)
+,mCell(Config::BOARD_CELL)
 ,mColors{
     // I, T, O, L, J, S, Z 七种方块对应颜色
     {0,255,255,255}, {128,0,128,255}, {255,255,0,255},

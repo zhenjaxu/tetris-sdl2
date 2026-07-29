@@ -1,8 +1,9 @@
-#include"Piece.h"
-#include"Board.h"
-#include"Game.h"
-#include<cstdlib>
-#include<ctime>
+#include "Piece.h"
+#include "Board.h"
+#include "Game.h"
+#include "Config.h"
+#include <cstdlib>
+#include <ctime>
 
 // 七种俄罗斯方块的标准形状（相对于方块中心的局部坐标）
 // 顺序：I, T, O, L, J, S, Z
@@ -16,7 +17,7 @@ const Vector2 SHAPES[7][4]={
     {{-1,0},{0,0},{0,1},{1,1}}
 };
 
-Piece::Piece(Game* game, float speed, float dropSpeed)
+Piece::Piece(Game* game)
 :Actor(game)
 ,mPosition(Vector2{0,0})
 ,mType(0)
@@ -24,8 +25,8 @@ Piece::Piece(Game* game, float speed, float dropSpeed)
 ,mPrevD(false)
 ,mPrevW(false)
 ,mPrevSpace(false)
-,mSpeed(speed)
-,mDropSpeed(dropSpeed)
+,mSpeed(Config::DROP_TIME)
+,mDropSpeed(Config::SOFT_DROP)
 ,mDropAccumulate(0.0f)
 {
     srand((unsigned)time(nullptr));
@@ -35,7 +36,7 @@ Piece::Piece(Game* game, float speed, float dropSpeed)
 void Piece::Spawn(){
     // 随机选择一种方块，生成在棋盘顶部中央
     mType=rand()%7;
-    mPosition.x=GetGame()->GetBoardColumns()/2;
+    mPosition.x = Config::BOARD_COLUMN / 2;
     mPosition.y=1;
     for(int i=0;i<4;++i){
         mBlocks[i].x=SHAPES[mType][i].x+mPosition.x;
@@ -130,7 +131,6 @@ void Piece::Update(float deltaTime){
 
 void Piece::Draw(SDL_Renderer* renderer){
     Board* board=GetGame()->GetBoard();
-    int cell=GetGame()->GetBoardCell();
     const SDL_Color& c=board->GetColors()[mType];
     SDL_Rect rc;
 
@@ -140,19 +140,19 @@ void Piece::Draw(SDL_Renderer* renderer){
         if(mGhost[i].y<0) continue;     // 如果mGhost[i].y小于0，则mBlocks[i].y也会小于0
         SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);  // 混合模式，绘制时与底色混合
         SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, 80);
-        rc.x=mGhost[i].x*cell+1;
-        rc.y=mGhost[i].y*cell+1;
-        rc.w=cell-2;
-        rc.h=cell-2;
+        rc.x = mGhost[i].x * Config::BOARD_CELL + 1;
+        rc.y = mGhost[i].y * Config::BOARD_CELL + 1;
+        rc.w = Config::BOARD_CELL - 2;
+        rc.h = Config::BOARD_CELL - 2;
         SDL_RenderFillRect(renderer, &rc);
         SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);   // 恢复正常模式，绘制实体块
 
         if(mBlocks[i].y<0) continue;
         SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
-        rc.x=mBlocks[i].x*cell+1;
-        rc.y=mBlocks[i].y*cell+1;
-        rc.w=cell-2;
-        rc.h=cell-2;
+        rc.x = mBlocks[i].x * Config::BOARD_CELL + 1;
+        rc.y = mBlocks[i].y * Config::BOARD_CELL + 1;
+        rc.w = Config::BOARD_CELL - 2;
+        rc.h = Config::BOARD_CELL - 2;
         SDL_RenderFillRect(renderer, &rc);
     }
 }

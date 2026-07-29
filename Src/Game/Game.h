@@ -14,8 +14,6 @@ public:
     void RemoveActor(class Actor* actor);   // Actor 在析构时自动注销
 
     class Board* GetBoard() const {return mBoard;}
-    int GetBoardColumns() const {return mBoardColumns;}
-    int GetBoardCell() const {return mBoardCell;}
 
 private:
     void ProcessInput();   // 处理窗口事件与键盘输入
@@ -29,10 +27,6 @@ private:
     SDL_Renderer* mRenderer;
     Uint32 mTicksCount;
     bool mIsRunning;
-
-    const int mBoardColumns;
-    const int mBoardRows;
-    const int mBoardCell;
 
     std::vector<class Actor*> mActors;
 

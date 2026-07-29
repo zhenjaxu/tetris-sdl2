@@ -5,7 +5,7 @@
 // 负责处理输入、自动下落、旋转、绘制以及幽灵块/硬降逻辑
 class Piece:public Actor{
 public:
-    Piece(class Game* game, float speed, float dropSpeed);
+    Piece(class Game* game);
 
     void Update(float deltaTime) override;
     void ProcessInput(const uint8_t* keyState) override;

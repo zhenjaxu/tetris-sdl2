@@ -1,23 +1,23 @@
 cmake_minimum_required(VERSION 3.10)
-project(tetris_test)
+project(tetris)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(TEST_FILES
-    Test/Main.cpp
-    Test/Game/Game.cpp
-    Test/Game/Actor.cpp
-    Test/Game/Board.cpp
-    Test/Game/Piece.cpp
+set(SRC_FILES
+    Src/Main.cpp
+    Src/Game/Game.cpp
+    Src/Game/Actor.cpp
+    Src/Game/Board.cpp
+    Src/Game/Piece.cpp
 )
 
 # SDL2路径
 set(SDL2_DIR D:/SDL2)
 
-add_executable(${PROJECT_NAME} ${TEST_FILES})
+add_executable(${PROJECT_NAME} ${SRC_FILES})
 
-target_include_directories(${PROJECT_NAME} PRIVATE Test/Game)
+target_include_directories(${PROJECT_NAME} PRIVATE Src/Game)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_DIR}/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${SDL2_DIR}/lib)
