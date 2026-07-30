@@ -177,11 +177,7 @@ void Piece::Move(MoveType move)
 
         case HARD_DROP:
             for(int i = 0; i < 4; ++i) mBlocks[i] = mGhost[i];
-
-            mBoard->Lock(mBlocks, mType);
-            mBoard->ClearLines();
-            Spawn();
-
+            Lock();
             break;
 
         default: break;

@@ -6,14 +6,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(SRC_FILES
     Src/Main.cpp
-    Src/Game/Game.cpp
-    Src/Game/Actor.cpp
+    Src/Engine/Core/Game.cpp
+    Src/Engine/Core/Actor.cpp
+    Src/Engine/Core/Component.cpp
+    Src/Engine/Core/InputComponent.cpp
+    Src/Engine/Renderer/Renderer.cpp
+    Src/Engine/Renderer/SpriteComponent.cpp
     Src/Game/Board.cpp
     Src/Game/Piece.cpp
-    Src/Game/Component.cpp
-    Src/Game/InputComponent.cpp
-    Src/Game/Renderer.cpp
-    Src/Game/SpriteComponent.cpp
 )
 
 # SDL2路径
@@ -21,7 +21,12 @@ set(SDL2_DIR D:/SDL2)
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 
-target_include_directories(${PROJECT_NAME} PRIVATE Src/Game)
+target_include_directories(${PROJECT_NAME} PRIVATE
+    Src/Engine/Core
+    Src/Engine/Renderer
+    Src/Common
+    Src/Game
+)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_DIR}/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${SDL2_DIR}/lib)
