@@ -3,15 +3,14 @@
 #include "Board.h"
 #include "Piece.h"
 #include "Config.h"
+#include "Renderer.h"
 #include <algorithm>
 
 Game::Game()
-:mWindow(nullptr)
-,mRenderer(nullptr)
-,mIsRunning(true)
-,mBoard(nullptr)
-,mPiece(nullptr)
-,mTicksCount(0)
+: mRenderer(nullptr)
+, mIsRunning(true)
+, mPiece(nullptr)
+, mTicksCount(0)
 {}
 
 
@@ -23,42 +22,43 @@ bool Game::Initialize()
         return false;
     }
 
-    mWindow=SDL_CreateWindow("Tetris", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 
-        Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT, 0);
-    if(!mWindow){
-        SDL_Log("Failed to create window: %s", SDL_GetError());
-        return false;
-    }
-
-    mRenderer=SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
-    if(!mRenderer){
-        SDL_Log("Failed to create renderer: %s", SDL_GetError());
+    mRenderer = new Renderer(this);
+    if(!mRenderer->Initialize())
+    {
+        delete mRenderer;
+        mRenderer = nullptr;
         return false;
     }
 
     LoadData();
-    mTicksCount=SDL_GetTicks();
+    mTicksCount = SDL_GetTicks();
     return true;
 }
 
-void Game::RunLoop(){
-    while(mIsRunning){
+void Game::RunLoop()
+{
+    while(mIsRunning)
+    {
         ProcessInput();
         UpdateGame();
         GenerateOutput();
     }
 }
 
-void Game::Shutdown(){
+void Game::Shutdown()
+{
     UnloadData();
-    SDL_DestroyRenderer(mRenderer);
-    SDL_DestroyWindow(mWindow);
+    if(mRenderer)
+    {
+        mRenderer->Shutdown();
+    }
     SDL_Quit();
 }
 
 
 
-void Game::ProcessInput(){
+void Game::ProcessInput()
+{
     SDL_Event event;
     while(SDL_PollEvent(&event)){
         switch(event.type){
@@ -76,7 +76,8 @@ void Game::ProcessInput(){
     mPiece->ProcessInput(keyState);
 }
 
-void Game::UpdateGame(){
+void Game::UpdateGame()
+{
     while(!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount+Config::TICK_DT));
     float deltaTime=(SDL_GetTicks()-mTicksCount)/1000.0f;
     if(deltaTime>0.05f) deltaTime=0.05f;
@@ -85,28 +86,23 @@ void Game::UpdateGame(){
     mPiece->Update(deltaTime);
 }
 
-void Game::GenerateOutput(){
-    SDL_SetRenderDrawColor(mRenderer, 10, 10, 10, 255);
-    SDL_RenderClear(mRenderer);
-    SDL_SetRenderDrawColor(mRenderer, 30, 30, 30, 255);
-    SDL_Rect rc = {0, 0, (int)Config::BOARD_WIDTH, (int)Config::BOARD_HEIGHT};
-    SDL_RenderFillRect(mRenderer, &rc);
-
-    mBoard->Draw(mRenderer);
-    mPiece->Draw(mRenderer);
-
-    SDL_RenderPresent(mRenderer);
+void Game::GenerateOutput()
+{
+    mRenderer->Draw();
 }
 
 
 
-void Game::LoadData(){
-    mBoard=new Board(this);
-    mPiece=new Piece(this);
+void Game::LoadData()
+{
+    auto board = new Board(this);
+    mPiece = new Piece(this, board);
 }
 
-void Game::UnloadData(){
-    while(!mActors.empty()){
+void Game::UnloadData()
+{
+    while(!mActors.empty())
+    {
         delete mActors.back();
     }
 }

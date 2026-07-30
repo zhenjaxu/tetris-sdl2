@@ -6,8 +6,9 @@
 #include <ctime>
 #include <SDL2/SDL.h>
 
-Piece::Piece(Game* game)
+Piece::Piece(Game* game, Board* board)
 :Actor(game)
+, mBoard(board)
 , mBlocks(4)
 , mGhost(4)
 , mPosition(Vector2{0,0})
@@ -16,8 +17,6 @@ Piece::Piece(Game* game)
 , mDropAccum(0.0f)
 {
     mInput = new InputComponent(this);
-
-    mBoard = game->GetBoard();
 
     srand((unsigned)time(nullptr));
     Spawn();

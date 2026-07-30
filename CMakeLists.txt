@@ -11,6 +11,7 @@ set(SRC_FILES
     Src/Game/Board.cpp
     Src/Game/Piece.cpp
     Src/Game/InputComponent.cpp
+    Src/Game/Renderer.cpp
 )
 
 # SDL2路径

@@ -14,7 +14,7 @@ public:
         HARD_DROP
     };
 
-    Piece(class Game* game);
+    Piece(class Game* game, class Board* board);
     ~Piece();
 
     void Update(float deltaTime) override;

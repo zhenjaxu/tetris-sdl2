@@ -1,6 +1,6 @@
 #pragma once
-#include<SDL2/SDL.h>
-#include<vector>
+#include <vector>
+#include <SDL2/SDL.h>
 
 class Game{
 public:
@@ -12,7 +12,7 @@ public:
     void AddActor(class Actor* actor);      
     void RemoveActor(class Actor* actor);   
 
-    class Board* GetBoard() const {return mBoard;}
+    const std::vector<class Actor*>& GetActors() const { return mActors; }
 
 private:
     void ProcessInput();   
@@ -22,13 +22,11 @@ private:
     void LoadData();    
     void UnloadData();  
 
-    SDL_Window* mWindow;
-    SDL_Renderer* mRenderer;
+    class Renderer* mRenderer;
     Uint32 mTicksCount;
     bool mIsRunning;
 
     std::vector<class Actor*> mActors;
 
-    class Board* mBoard;
     class Piece* mPiece;
 };
