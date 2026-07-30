@@ -5,7 +5,7 @@
 #include <SDL2/SDL_scancode.h>
 
 InputComponent::InputComponent(Actor* owner)
-: mOwner(owner)
+: Component(owner)
 , mPrevA(false)
 , mPrevD(false)
 , mPrevW(false)

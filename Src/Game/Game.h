@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include <SDL2/SDL.h>
+#include <cstdint>
 
 class Game{
 public:
@@ -23,7 +23,7 @@ private:
     void UnloadData();  
 
     class Renderer* mRenderer;
-    Uint32 mTicksCount;
+    uint32_t mTicksCount;
     bool mIsRunning;
 
     std::vector<class Actor*> mActors;

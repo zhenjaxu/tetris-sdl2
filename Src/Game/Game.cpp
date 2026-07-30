@@ -5,6 +5,7 @@
 #include "Config.h"
 #include "Renderer.h"
 #include <algorithm>
+#include <SDL2/SDL.h>
 
 Game::Game()
 : mRenderer(nullptr)
@@ -68,22 +69,48 @@ void Game::ProcessInput()
         }
     }
 
-    const Uint8* keyState=SDL_GetKeyboardState(NULL);
+    const Uint8* keyState = SDL_GetKeyboardState(NULL);
     if(keyState[SDL_SCANCODE_ESCAPE]){
         mIsRunning=false;
     }
 
-    mPiece->ProcessInput(keyState);
+    // mUpdatingActors = true;
+	for (auto actor : mActors)
+	{
+		actor->ProcessInput(keyState);
+	}
+	// mUpdatingActors = false;
 }
 
 void Game::UpdateGame()
 {
-    while(!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount+Config::TICK_DT));
-    float deltaTime=(SDL_GetTicks()-mTicksCount)/1000.0f;
-    if(deltaTime>0.05f) deltaTime=0.05f;
-    mTicksCount=SDL_GetTicks();
+    while(!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount + Config::TICK_DT));
+    float deltaTime = (SDL_GetTicks() - mTicksCount) / 1000.0f;
+    if(deltaTime > 0.05f) deltaTime = 0.05f;
+    mTicksCount = SDL_GetTicks();
 
-    mPiece->Update(deltaTime);
+    // mUpdatingActors=true;
+    for(auto actor : mActors)
+    {
+        actor->Update(deltaTime);
+    }
+    // mUpdatingActors=false;
+
+    // for(auto pending:mPendingActors){
+    //     mActors.emplace_back(pending);
+    // }
+    // mPendingActors.clear();
+
+    // std::vector<Actor*> deadActors;
+    // for(auto actor:mActors){
+    //     if(actor->GetState()==Actor::EDead){
+    //         deadActors.emplace_back(actor);
+    //     }
+    // }
+
+    // for(auto actor:deadActors){
+    //     delete actor;
+    // }
 }
 
 void Game::GenerateOutput()

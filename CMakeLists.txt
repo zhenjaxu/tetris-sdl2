@@ -10,6 +10,7 @@ set(SRC_FILES
     Src/Game/Actor.cpp
     Src/Game/Board.cpp
     Src/Game/Piece.cpp
+    Src/Game/Component.cpp
     Src/Game/InputComponent.cpp
     Src/Game/Renderer.cpp
 )

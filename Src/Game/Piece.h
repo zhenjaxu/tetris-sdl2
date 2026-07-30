@@ -15,10 +15,8 @@ public:
     };
 
     Piece(class Game* game, class Board* board);
-    ~Piece();
 
-    void Update(float deltaTime) override;
-    void ProcessInput(const uint8_t* keyState) override;
+    void UpdateActor(float deltaTime) override;
     void Draw(class SDL_Renderer* renderer) override;
 
     void SendInput(MoveType move);
@@ -34,7 +32,6 @@ private:
     void Rotate(std::vector<Vector2>& out) const;
 
     std::vector<MoveType> mInputEvent;
-    class InputComponent* mInput;
 
     std::vector<Vector2> mBlocks;
     std::vector<Vector2> mGhost;

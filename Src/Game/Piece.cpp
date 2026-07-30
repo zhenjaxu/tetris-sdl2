@@ -7,33 +7,24 @@
 #include <SDL2/SDL.h>
 
 Piece::Piece(Game* game, Board* board)
-:Actor(game)
+: Actor(game)
 , mBoard(board)
 , mBlocks(4)
 , mGhost(4)
 , mPosition(Vector2{0,0})
 , mType(0)
-, mDropTime(0.0f)
+, mDropTime(Config::DROP_TIME)
 , mDropAccum(0.0f)
 {
-    mInput = new InputComponent(this);
+    auto im = new InputComponent(this);
 
     srand((unsigned)time(nullptr));
     Spawn();
 }
 
-Piece::~Piece()
-{
-    delete mInput;
-}
 
 
-void Piece::ProcessInput(const uint8_t* keyState)
-{
-    mInput->ProcessInput(keyState);
-}
-
-void Piece::Update(float deltaTime)
+void Piece::UpdateActor(float deltaTime)
 {
     mDropAccum += deltaTime;
 
@@ -168,12 +159,13 @@ void Piece::Move(MoveType move)
             // 踢墙  
             {
                 int i = 0;
-                while(i < 4 && !IsValid(nxt))
+                while(!IsValid(nxt) && i < 4)
                 {
                     mPosition = mBlocks[i++];
                     Rotate(nxt);
                 }
             }
+            mPosition = mBlocks[1];
 
             break;
 

@@ -1,6 +1,6 @@
 #include "Board.h"
 #include "Game.h"
-#include<SDL2/SDL.h>
+#include <SDL2/SDL.h>
 
 Board::Board(Game* game)
 :Actor(game)
