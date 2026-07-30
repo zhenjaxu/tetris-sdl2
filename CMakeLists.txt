@@ -10,6 +10,7 @@ set(SRC_FILES
     Src/Game/Actor.cpp
     Src/Game/Board.cpp
     Src/Game/Piece.cpp
+    Src/Game/InputComponent.cpp
 )
 
 # SDL2路径

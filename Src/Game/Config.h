@@ -1,5 +1,14 @@
 #pragma once
 
+struct Color
+{
+    float r, g, b, a;
+};
+
+struct Vector2{
+    int x, y;
+};
+
 namespace Config
 {
     constexpr float TICK_RATE = 60.0f; 
@@ -15,4 +24,19 @@ namespace Config
 
     constexpr float DROP_TIME = 0.5f;
     constexpr float SOFT_DROP = 0.1f;
+
+    constexpr Color COLORS[7] = {
+        {0,255,255,255}, {128,0,128,255}, {255,255,0,255}, {255,165,0,255}, 
+        {0,0,255,255}, {0,255,0,255}, {255,0,0,255}
+    };
+
+    constexpr Vector2 SHAPES[7][4] = {
+        {{0,-1}, {0,0}, {0,1}, {0,2}},
+        {{-1,0}, {0,0}, {1,0}, {0,1}},
+        {{0,0}, {1,0}, {0,1}, {1,1}},
+        {{0,-1}, {0,0}, {0,1}, {1,1}},
+        {{0,-1}, {0,0}, {0,1}, {-1,1}},
+        {{1,0}, {0,0}, {0,1}, {-1,1}},
+        {{-1,0}, {0,0}, {0,1}, {1,1}}
+    };
 };
