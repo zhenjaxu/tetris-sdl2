@@ -2,7 +2,7 @@
 #include "Board.h"
 #include "Game.h"
 #include "InputComponent.h"
-#include <cstdlib>
+#include "SpriteComponent.h"
 #include <ctime>
 #include <SDL2/SDL.h>
 
@@ -13,10 +13,11 @@ Piece::Piece(Game* game, Board* board)
 , mGhost(4)
 , mPosition(Vector2{0,0})
 , mType(0)
-, mDropTime(Config::DROP_TIME)
+, mDropTime(0.0f)
 , mDropAccum(0.0f)
 {
-    auto im = new InputComponent(this);
+    auto ic = new InputComponent(this);
+    auto sc = new SpriteComponent(this);
 
     srand((unsigned)time(nullptr));
     Spawn();
@@ -43,31 +44,36 @@ void Piece::UpdateActor(float deltaTime)
     
 }
 
-void Piece::Draw(SDL_Renderer* renderer)
+std::shared_ptr<std::vector<Block>> Piece::DrawCall()
 {
+    auto blocks = std::make_shared<std::vector<Block>>();
     Color c = Config::COLORS[mType];
-    SDL_Rect rc;
-    rc.w = Config::BOARD_CELL - 2;
-    rc.h = Config::BOARD_CELL - 2;
-
+    Block block;
+    block.w = Config::BOARD_CELL - 2;
+    block.h = Config::BOARD_CELL - 2;
+    
     for(int i = 0; i < 4; ++i)
     {
-        if(mGhost[i].y<0) continue;   
+        if(mGhost[i].y < 0) continue;
 
-        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);  // 混合模式，绘制时与底色混合
-        SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, 80);
-        rc.x = mGhost[i].x * Config::BOARD_CELL + 1;
-        rc.y = mGhost[i].y * Config::BOARD_CELL + 1;
-        SDL_RenderFillRect(renderer, &rc);
-        SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);   // 恢复正常模式，绘制实体块
+        block.blend = true;
+        c.a = 80;
+        block.x = mGhost[i].x * Config::BOARD_CELL + 1;
+        block.y = mGhost[i].y * Config::BOARD_CELL + 1;
+        block.color = c;
+        blocks->push_back(block);
 
-        if(mBlocks[i].y<0) continue;
-
-        SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
-        rc.x = mBlocks[i].x * Config::BOARD_CELL + 1;
-        rc.y = mBlocks[i].y * Config::BOARD_CELL + 1;
-        SDL_RenderFillRect(renderer, &rc);
+        if(mBlocks[i].y < 0) continue;
+        
+        block.blend = false;
+        c.a = 255;
+        block.x = mBlocks[i].x * Config::BOARD_CELL + 1;
+        block.y = mBlocks[i].y * Config::BOARD_CELL + 1;
+        block.color = c;
+        blocks->push_back(block);
     }
+
+    return blocks;
 }
 
 

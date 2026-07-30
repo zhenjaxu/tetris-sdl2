@@ -1,11 +1,40 @@
 #include "Board.h"
 #include "Game.h"
+#include "SpriteComponent.h"
 #include <SDL2/SDL.h>
 
 Board::Board(Game* game)
 :Actor(game)
 {
+    auto sc = new SpriteComponent(this);
+
     Reset();
+}
+
+
+
+std::shared_ptr<std::vector<Block>> Board::DrawCall()
+{
+    auto blocks = std::make_shared<std::vector<Block>>();
+    Block block;
+    block.blend = false;
+    block.w = Config::BOARD_CELL - 2;
+    block.h = Config::BOARD_CELL - 2;
+
+    for(int y = 0; y < Config::BOARD_ROW; ++y)
+    {
+        for(int x = 0; x < Config::BOARD_COLUMN; ++x)
+        {
+            if(mGrid[y][x] == -1) continue;
+
+            block.color = Config::COLORS[mGrid[y][x]];
+            block.x = x * Config::BOARD_CELL + 1;
+            block.y = y * Config::BOARD_CELL + 1;
+            blocks->push_back(block);
+        }
+    }
+
+    return blocks;
 }
 
 
@@ -62,29 +91,6 @@ void Board::ClearLines()
             mGrid.erase(mGrid.begin() + y);
             mGrid.insert(mGrid.begin(), std::vector<int>(Config::BOARD_COLUMN, -1));
             ++y;
-        }
-    }
-}
-
-
-
-void Board::Draw(SDL_Renderer* renderer)
-{
-    for(int y = 0; y < Config::BOARD_ROW; ++y)
-    {
-        for(int x = 0; x < Config::BOARD_COLUMN; ++x)
-        {
-            if(mGrid[y][x] == -1) continue;
-
-            Color c = Config::COLORS[mGrid[y][x]];
-            SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
-            SDL_Rect rc = {
-                static_cast<int>(x * Config::BOARD_CELL + 1), 
-                static_cast<int>(y * Config::BOARD_CELL + 1), 
-                static_cast<int>(Config::BOARD_CELL - 2), 
-                static_cast<int>(Config::BOARD_CELL - 2)
-            };
-            SDL_RenderFillRect(renderer, &rc);
         }
     }
 }

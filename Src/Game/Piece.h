@@ -2,6 +2,7 @@
 #include "Actor.h"
 #include "Config.h"
 #include <vector>
+#include <memory>
 
 class Piece : public Actor{
 public:
@@ -17,7 +18,7 @@ public:
     Piece(class Game* game, class Board* board);
 
     void UpdateActor(float deltaTime) override;
-    void Draw(class SDL_Renderer* renderer) override;
+    std::shared_ptr<std::vector<Block>> DrawCall() override;
 
     void SendInput(MoveType move);
     void SetDropTime(float time){ mDropTime = time; }

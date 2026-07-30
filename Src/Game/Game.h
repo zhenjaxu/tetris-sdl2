@@ -12,7 +12,7 @@ public:
     void AddActor(class Actor* actor);      
     void RemoveActor(class Actor* actor);   
 
-    const std::vector<class Actor*>& GetActors() const { return mActors; }
+    class Renderer* GetRenderer() const { return mRenderer; }
 
 private:
     void ProcessInput();   

@@ -6,8 +6,7 @@
 class Board : public Actor{
 public:
     Board(class Game* game);
-
-    void Draw(class SDL_Renderer* renderer) override;
+    std::shared_ptr<std::vector<Block>> DrawCall() override;
 
     bool IsValid(const std::vector<Vector2>& blocks) const;        // 碰撞检测：是否越界或与已固定方块重叠
     void Lock(const std::vector<Vector2>& blocks, int type);       // 将当前方块锁定到棋盘上

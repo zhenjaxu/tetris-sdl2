@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 class Renderer
 {
@@ -8,8 +9,13 @@ public:
     void Shutdown();
     void Draw();
 
+    void AddSprite(class SpriteComponent* sprite);
+    void RemoveSprite(class SpriteComponent* sprite);
+
 private:
     class SDL_Window* mWindow;
     class SDL_Renderer* mRenderer;
+    std::vector<class SpriteComponent*> mSprites;
+
     class Game* mGame;
 };

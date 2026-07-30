@@ -5,8 +5,16 @@ struct Color
     float r, g, b, a;
 };
 
-struct Vector2{
+struct Vector2
+{
     int x, y;
+};
+
+struct Block
+{
+    bool blend;
+    float x, y, w, h;
+    Color color;
 };
 
 namespace Config

@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <vector>
+#include <memory>
 
 class Actor{
 public:
@@ -16,9 +17,14 @@ public:
 
     void Update(float deltaTime);
     virtual void UpdateActor(float deltaTime){}
+    
     void ProcessInput(const uint8_t* keyState);
     virtual void ActorInput(const uint8_t* keyState){}
-    virtual void Draw(class SDL_Renderer* renderer){}
+
+    virtual std::shared_ptr<std::vector<struct Block>> DrawCall()
+    { 
+        return std::shared_ptr<std::vector<struct Block>>(); 
+    }
 
     void AddComponent(class Component* component);
     void RemoveComponent(class Component* component);

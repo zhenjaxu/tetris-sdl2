@@ -2,6 +2,8 @@
 #include "Game.h"
 #include "Actor.h"
 #include "Config.h"
+#include "SpriteComponent.h"
+#include <algorithm>
 #include <SDL2/SDL.h>
 
 Renderer::Renderer(Game* game)
@@ -42,10 +44,33 @@ void Renderer::Draw()
     SDL_Rect rc = {0, 0, (int)Config::BOARD_WIDTH, (int)Config::BOARD_HEIGHT};
     SDL_RenderFillRect(mRenderer, &rc);
 
-    for(auto actor : mGame->GetActors())
+    for(auto sprite : mSprites)
     {
-        actor->Draw(mRenderer);
+        sprite->Draw(mRenderer);
     }
 
     SDL_RenderPresent(mRenderer);
+}
+
+
+
+void Renderer::AddSprite(SpriteComponent* sprite)
+{
+	int myDrawOrder = sprite->GetDrawOrder();
+	auto iter = mSprites.begin();
+	for (; iter != mSprites.end(); ++iter)
+	{
+		if (myDrawOrder < (*iter)->GetDrawOrder())
+		{
+			break;
+		}
+	}
+
+	mSprites.insert(iter, sprite);
+}
+
+void Renderer::RemoveSprite(SpriteComponent* sprite)
+{
+	auto iter = std::find(mSprites.begin(), mSprites.end(), sprite);
+	if(iter != mSprites.end()) mSprites.erase(iter);
 }
