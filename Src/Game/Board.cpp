@@ -2,9 +2,12 @@
 #include "Game.h"
 #include "SpriteComponent.h"
 #include <SDL2/SDL.h>
+#include <cmath>
 
 Board::Board(Game* game)
-:Actor(game)
+: Actor(game)
+, mScoreCount(0)
+, mLastScore(0)
 {
     auto sc = new SpriteComponent(this);
 
@@ -42,6 +45,9 @@ std::shared_ptr<std::vector<Block>> Board::DrawCall()
 void Board::Reset()
 {
     mGrid.assign(Config::BOARD_ROW, std::vector<int>(Config::BOARD_COLUMN, -1));
+
+    mLastScore = mScoreCount;
+    mScoreCount = 0;
 }
 
 bool Board::IsValid(const std::vector<Vector2>& blocks) const 
@@ -74,6 +80,8 @@ void Board::Lock(const std::vector<Vector2>& blocks, int type)
 
 void Board::ClearLines()
 {
+    int lines = 0;
+
     for(int y = Config::BOARD_ROW - 1; y >= 0; --y)
     {
         bool full = true;
@@ -91,6 +99,10 @@ void Board::ClearLines()
             mGrid.erase(mGrid.begin() + y);
             mGrid.insert(mGrid.begin(), std::vector<int>(Config::BOARD_COLUMN, -1));
             ++y;
+
+            ++lines;
         }
     }
+
+    if(lines != 0) mScoreCount += lines * 10 * std::pow(1.2, lines - 1);
 }

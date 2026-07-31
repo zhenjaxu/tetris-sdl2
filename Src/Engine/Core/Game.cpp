@@ -122,8 +122,8 @@ void Game::GenerateOutput()
 
 void Game::LoadData()
 {
-    auto board = new Board(this);
-    mPiece = new Piece(this, board);
+    mBoard = new Board(this);
+    mPiece = new Piece(this, mBoard);
 }
 
 void Game::UnloadData()

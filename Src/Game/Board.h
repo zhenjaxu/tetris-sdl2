@@ -13,6 +13,12 @@ public:
     void ClearLines();                  // 消除已满的行
     void Reset();                       // 清空棋盘
 
+    uint32_t GetScore() const { return mScoreCount; }
+    uint32_t GetLastScore() const { return mLastScore; }
+
 private:
     std::vector<std::vector<int>> mGrid;
+    
+    uint32_t mScoreCount;
+    uint32_t mLastScore;
 };

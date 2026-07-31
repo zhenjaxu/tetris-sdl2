@@ -30,4 +30,4 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_DIR}/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${SDL2_DIR}/lib)
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2 SDL2_ttf)

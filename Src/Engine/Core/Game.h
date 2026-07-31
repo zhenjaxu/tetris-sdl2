@@ -13,6 +13,7 @@ public:
     void RemoveActor(class Actor* actor);   
 
     class Renderer* GetRenderer() const { return mRenderer; }
+    class Board* GetBoard() const { return mBoard; }
 
 private:
     void ProcessInput();   
@@ -29,4 +30,5 @@ private:
     std::vector<class Actor*> mActors;
 
     class Piece* mPiece;
+    class Board* mBoard;
 };
