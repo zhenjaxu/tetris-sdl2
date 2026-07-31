@@ -38,6 +38,10 @@ private:
     std::vector<Vector2> mGhost;
     Vector2 mPosition;
     int mType;
+
+    // 即将生成的方块
+    std::vector<Vector2> mNext;
+    int mNextType;
     
     float mDropTime;
     float mDropAccum;

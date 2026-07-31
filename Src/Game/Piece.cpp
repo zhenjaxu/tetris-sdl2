@@ -11,8 +11,10 @@ Piece::Piece(Game* game, Board* board)
 , mBoard(board)
 , mBlocks(4)
 , mGhost(4)
+, mNext(4)
 , mPosition(Vector2{0,0})
-, mType(0)
+, mType(-1)
+, mNextType(-1)
 , mDropTime(0.0f)
 , mDropAccum(0.0f)
 {
@@ -47,11 +49,22 @@ void Piece::UpdateActor(float deltaTime)
 std::shared_ptr<std::vector<Block>> Piece::DrawCall()
 {
     auto blocks = std::make_shared<std::vector<Block>>();
-    Color c = Config::COLORS[mType];
+
+    // 显示即将生成的方块
+    Color c = Config::COLORS[mNextType];
     Block block;
     block.w = Config::BOARD_CELL - 2;
     block.h = Config::BOARD_CELL - 2;
-    
+    for(int i = 0; i < 4; ++i)
+    {
+        block.blend = false;
+        block.x = mNext[i].x * Config::BOARD_CELL + 1;
+        block.y = mNext[i].y * Config::BOARD_CELL + 1;
+        block.color = c;
+        blocks->push_back(block);
+    }
+
+    c = Config::COLORS[mType];
     for(int i = 0; i < 4; ++i)
     {
         if(mGhost[i].y < 0) continue;
@@ -98,8 +111,21 @@ void Piece::Lock()
     }
 }
 
-void Piece::Spawn(){
-    mType = rand() % 7;
+void Piece::Spawn(){ 
+    if(mType == -1) mType = rand() % 7;
+    else mType = mNextType;
+    mNextType = rand() % 7;
+
+    // 即将生成的方块
+    Vector2 NextPos;
+    NextPos.x = Config::BOARD_COLUMN + 3;
+    NextPos.y = 3;
+    for(int i = 0; i < 4; ++i)
+    {
+        mNext[i].x = Config::SHAPES[mNextType][i].x + NextPos.x;
+        mNext[i].y = Config::SHAPES[mNextType][i].y + NextPos.y;
+    }
+
     mPosition.x = Config::BOARD_COLUMN / 2;
     mPosition.y = 1;
     for(int i = 0; i < 4; ++i)
