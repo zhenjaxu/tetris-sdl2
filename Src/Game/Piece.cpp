@@ -1,8 +1,9 @@
 #include "Piece.h"
 #include "Board.h"
 #include "Game.h"
+#include "Config.h"
 #include "InputComponent.h"
-#include "SpriteComponent.h"
+#include "BlockSpriteComponent.h"
 #include <ctime>
 #include <SDL2/SDL.h>
 
@@ -12,25 +13,19 @@ Piece::Piece(Game* game, Board* board)
 , mBlocks(4)
 , mGhost(4)
 , mNext(4)
-, mPosition(Vector2{0,0})
 , mType(-1)
 , mNextType(-1)
-, mDropTime(0.0f)
-, mDropAccum(0.0f)
+, mDropSpeed(0.0f)
 {
     auto ic = new InputComponent(this);
-    auto sc = new SpriteComponent(this);
+    auto bsc = new BlockSpriteComponent(this);
 
     srand((unsigned)time(nullptr));
     Spawn();
 }
 
-
-
 void Piece::UpdateActor(float deltaTime)
 {
-    mDropAccum += deltaTime;
-
     for(auto input : mInputEvent)
     {
         Move(input);
@@ -38,15 +33,13 @@ void Piece::UpdateActor(float deltaTime)
     }
     mInputEvent.clear();
 
-    if(mDropAccum >= mDropTime)
-    {
-        mDropAccum -= mDropTime;
-        Move(DROP);
-    }
-    
+    Vector2 prev = Math::ToGrid(mPosition);
+    mPosition.y += mDropSpeed * deltaTime;
+    Vector2 curr = Math::ToGrid(mPosition);
+    if(curr.y != prev.y) Move(DROP);
 }
 
-std::shared_ptr<std::vector<Block>> Piece::DrawCall()
+std::shared_ptr<std::vector<Block>> Piece::GetBlocks()
 {
     auto blocks = std::make_shared<std::vector<Block>>();
 
@@ -126,12 +119,13 @@ void Piece::Spawn(){
         mNext[i].y = Config::SHAPES[mNextType][i].y + NextPos.y;
     }
 
-    mPosition.x = Config::BOARD_COLUMN / 2;
-    mPosition.y = 1;
+    mPosition.x = Config::BOARD_WIDTH / 2;
+    mPosition.y = Config::BOARD_CELL;
+    Vector2 center = Math::ToGrid(mPosition);
     for(int i = 0; i < 4; ++i)
     {
-        mBlocks[i].x = Config::SHAPES[mType][i].x + mPosition.x;
-        mBlocks[i].y = Config::SHAPES[mType][i].y + mPosition.y;
+        mBlocks[i].x = Config::SHAPES[mType][i].x + center.x;
+        mBlocks[i].y = Config::SHAPES[mType][i].y + center.y;
     }
     
     CalculateGhost(mGhost);
@@ -171,33 +165,32 @@ void Piece::Move(MoveType move)
     {
         case LEFT:
             for(int i = 0; i < 4; ++i) nxt[i] = {mBlocks[i].x - 1, mBlocks[i].y};
-            if(IsValid(nxt)) --mPosition.x;
+            if(IsValid(nxt)) mPosition.x -= Config::BOARD_CELL;
             break;
 
         case RIGHT:
             for(int i = 0; i < 4; ++i) nxt[i] = {mBlocks[i].x + 1, mBlocks[i].y};
-            if(IsValid(nxt)) ++mPosition.x;
+            if(IsValid(nxt)) mPosition.x += Config::BOARD_CELL;
             break;
 
         case DROP:
             for(int i = 0; i < 4; ++i) nxt[i] = {mBlocks[i].x, mBlocks[i].y + 1};
-            if(IsValid(nxt)) ++mPosition.y;
-            else Lock();
+            if(!IsValid(nxt)) Lock();
             break;
 
-        case ROTATE:
-            Rotate(nxt);
-
+        case ROTATE: 
             // 踢墙  
             {
+                Vector2 center = Math::ToGrid(mPosition);
+                Rotate(nxt, center);
+
                 int i = 0;
                 while(!IsValid(nxt) && i < 4)
                 {
-                    mPosition = mBlocks[i++];
-                    Rotate(nxt);
+                    center = mBlocks[i++];
+                    Rotate(nxt, center);
                 }
             }
-            mPosition = mBlocks[1];
 
             break;
 
@@ -210,13 +203,13 @@ void Piece::Move(MoveType move)
     }
 }
 
-void Piece::Rotate(std::vector<Vector2>& out) const 
+void Piece::Rotate(std::vector<Vector2>& out, const Vector2& center) const 
 {
     for(int i = 0; i < 4; ++i)
     {
-        int rx = mBlocks[i].x - mPosition.x;
-        int ry = mBlocks[i].y - mPosition.y;
-        out[i].x = mPosition.x - ry;
-        out[i].y = mPosition.y + rx;
+        int rx = mBlocks[i].x - center.x;
+        int ry = mBlocks[i].y - center.y;
+        out[i].x = center.x - ry;
+        out[i].y = center.y + rx;
     }
 }

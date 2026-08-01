@@ -70,47 +70,62 @@ void Game::ProcessInput()
     }
 
     const Uint8* keyState = SDL_GetKeyboardState(NULL);
-    if(keyState[SDL_SCANCODE_ESCAPE]){
-        mIsRunning=false;
+    if(keyState[SDL_SCANCODE_ESCAPE])
+    {
+        mIsRunning = false;
     }
+    if(keyState[SDL_SCANCODE_R] && !reset)
+    {
+        mBoard->Reset();
+        mPiece->Spawn();
+    }
+    reset = keyState[SDL_SCANCODE_R];
 
-    // mUpdatingActors = true;
+    mUpdatingActors = true;
 	for (auto actor : mActors)
 	{
 		actor->ProcessInput(keyState);
 	}
-	// mUpdatingActors = false;
+	mUpdatingActors = false;
 }
 
 void Game::UpdateGame()
 {
-    while(!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount + Config::TICK_DT));
+    if(!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount + Config::TICK_DT))
+    {
+        SDL_Delay(mTicksCount + Config::TICK_DT - SDL_GetTicks());
+    }
+
     float deltaTime = (SDL_GetTicks() - mTicksCount) / 1000.0f;
     if(deltaTime > 0.05f) deltaTime = 0.05f;
     mTicksCount = SDL_GetTicks();
 
-    // mUpdatingActors=true;
+    mUpdatingActors=true;
     for(auto actor : mActors)
     {
         actor->Update(deltaTime);
     }
-    // mUpdatingActors=false;
+    mUpdatingActors=false;
 
-    // for(auto pending:mPendingActors){
-    //     mActors.emplace_back(pending);
-    // }
-    // mPendingActors.clear();
+    for(auto pending:mPendingActors)
+    {
+        mActors.emplace_back(pending);
+    }
+    mPendingActors.clear();
 
-    // std::vector<Actor*> deadActors;
-    // for(auto actor:mActors){
-    //     if(actor->GetState()==Actor::EDead){
-    //         deadActors.emplace_back(actor);
-    //     }
-    // }
+    std::vector<Actor*> deadActors;
+    for(auto actor:mActors)
+    {
+        if(actor->GetState() == Actor::EDead)
+        {
+            deadActors.emplace_back(actor);
+        }
+    }
 
-    // for(auto actor:deadActors){
-    //     delete actor;
-    // }
+    for(auto actor:deadActors)
+    {
+        delete actor;
+    }
 }
 
 void Game::GenerateOutput()
@@ -136,14 +151,31 @@ void Game::UnloadData()
 
 
 
-void Game::AddActor(Actor* actor){
-    mActors.emplace_back(actor);
+void Game::AddActor(Actor* actor)
+{
+	if (mUpdatingActors)
+	{
+		mPendingActors.emplace_back(actor);
+	}
+	else
+	{
+		mActors.emplace_back(actor);
+	}
 }
 
-void Game::RemoveActor(Actor* actor){
-    auto iter=std::find(mActors.begin(), mActors.end(), actor);
-    if(iter!=mActors.end()){
-        std::iter_swap(iter, mActors.end()-1);
-        mActors.pop_back();
-    }
+void Game::RemoveActor(Actor* actor)
+{
+	auto iter = std::find(mPendingActors.begin(), mPendingActors.end(), actor);
+	if (iter != mPendingActors.end())
+	{
+		std::iter_swap(iter, mPendingActors.end() - 1);
+		mPendingActors.pop_back();
+	}
+
+	iter = std::find(mActors.begin(), mActors.end(), actor);
+	if (iter != mActors.end())
+	{
+		std::iter_swap(iter, mActors.end() - 1);
+		mActors.pop_back();
+	}
 }

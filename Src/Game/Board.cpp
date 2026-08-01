@@ -1,22 +1,23 @@
 #include "Board.h"
 #include "Game.h"
-#include "SpriteComponent.h"
+#include "Config.h"
+#include "BlockSpriteComponent.h"
+#include "UI.h"
 #include <SDL2/SDL.h>
 #include <cmath>
 
 Board::Board(Game* game)
 : Actor(game)
-, mScoreCount(0)
-, mLastScore(0)
 {
-    auto sc = new SpriteComponent(this);
+    auto bsc = new BlockSpriteComponent(this);
+    mScoreCounter = new UI(game);
 
     Reset();
 }
 
 
 
-std::shared_ptr<std::vector<Block>> Board::DrawCall()
+std::shared_ptr<std::vector<Block>> Board::GetBlocks()
 {
     auto blocks = std::make_shared<std::vector<Block>>();
     Block block;
@@ -45,9 +46,7 @@ std::shared_ptr<std::vector<Block>> Board::DrawCall()
 void Board::Reset()
 {
     mGrid.assign(Config::BOARD_ROW, std::vector<int>(Config::BOARD_COLUMN, -1));
-
-    mLastScore = mScoreCount;
-    mScoreCount = 0;
+    if(mScoreCounter) mScoreCounter->Reset();
 }
 
 bool Board::IsValid(const std::vector<Vector2>& blocks) const 
@@ -104,5 +103,5 @@ void Board::ClearLines()
         }
     }
 
-    if(lines != 0) mScoreCount += lines * 10 * std::pow(1.2, lines - 1);
+    mScoreCounter->PlusScore(lines * (int)(Config::BASE_SCORE * std::pow(Config::COMBO_RAWORD, lines - 1)));
 }

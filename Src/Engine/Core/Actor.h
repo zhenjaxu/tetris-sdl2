@@ -1,7 +1,7 @@
 #pragma once
+#include "Config.h"
 #include <cstdint>
 #include <vector>
-#include <memory>
 
 class Actor{
 public:
@@ -14,17 +14,11 @@ public:
 
     Actor(class Game* game);
     virtual ~Actor();
-
+    
     void Update(float deltaTime);
     virtual void UpdateActor(float deltaTime){}
-    
     void ProcessInput(const uint8_t* keyState);
     virtual void ActorInput(const uint8_t* keyState){}
-
-    virtual std::shared_ptr<std::vector<struct Block>> DrawCall()
-    { 
-        return std::shared_ptr<std::vector<struct Block>>(); 
-    }
 
     void AddComponent(class Component* component);
     void RemoveComponent(class Component* component);
@@ -32,11 +26,21 @@ public:
     class Game* GetGame() const {return mGame;}
 
     State GetState() const { return mState; }
+    const Vector2& GetPosition() const { return mPosition; }
+    float GetScale() const { return mScale; }
+    float GetRotation() const { return mRotation; }
+
     void SetState(State state){ mState = state; }
+    void SetPosition(const Vector2& position){ mPosition = position; }
+    void SetScale(float scale){ mScale = scale; }
+    void SetRotation(float rotation){ mRotation = rotation; }
 
-private:
+protected:
     State mState;
-    std::vector<class Component*> mComponents;
+    Vector2 mPosition;
+    float mScale;
+    float mRotation;
 
+    std::vector<class Component*> mComponents;
     class Game* mGame;
 };

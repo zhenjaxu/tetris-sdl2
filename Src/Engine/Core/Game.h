@@ -27,8 +27,12 @@ private:
     uint32_t mTicksCount;
     bool mIsRunning;
 
+    bool mUpdatingActors;
     std::vector<class Actor*> mActors;
+    std::vector<class Actor*> mPendingActors;
 
     class Piece* mPiece;
     class Board* mBoard;
+
+    bool reset = false;
 };

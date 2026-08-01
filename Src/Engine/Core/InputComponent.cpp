@@ -26,7 +26,7 @@ void InputComponent::ProcessInput(const uint8_t* keyState)
         if(W && !mPrevW) find->SendInput(Piece::ROTATE);
         if(Space && !mPrevSpace) find->SendInput(Piece::HARD_DROP);
 
-        find->SetDropTime(keyState[SDL_SCANCODE_S] ? Config::SOFT_DROP : Config::DROP_TIME);
+        find->SetDropSpeed(keyState[SDL_SCANCODE_S] ? Config::SOFT_DROP : Config::DROP_SPEED);
     }
 
     mPrevA = A;

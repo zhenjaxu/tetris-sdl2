@@ -1,19 +1,28 @@
 #pragma once
+#include <string>
+#include <cstdint>
 
 struct Color
 {
-    float r, g, b, a;
+    uint8_t r, g, b, a;
 };
 
 struct Vector2
 {
-    int x, y;
+    float x, y;
 };
 
 struct Block
 {
     bool blend;
-    float x, y, w, h;
+    int x, y, w, h;
+    Color color;
+};
+
+struct Text
+{
+    std::string content;
+    int x, y;
     Color color;
 };
 
@@ -30,8 +39,8 @@ namespace Config
     constexpr float WINDOW_WIDTH = BOARD_COLUMN * BOARD_CELL + 200.0f;
     constexpr float WINDOW_HEIGHT = BOARD_ROW * BOARD_CELL;
 
-    constexpr float DROP_TIME = 0.5f;
-    constexpr float SOFT_DROP = 0.1f;
+    constexpr float DROP_SPEED = 60.0f;
+    constexpr float SOFT_DROP = 300.0f;
 
     constexpr Color COLORS[7] = {
         {0,255,255,255}, {128,0,128,255}, {255,255,0,255}, {255,165,0,255}, 
@@ -47,4 +56,7 @@ namespace Config
         {{1,0}, {0,0}, {0,1}, {-1,1}},
         {{-1,0}, {0,0}, {0,1}, {1,1}}
     };
+
+    constexpr int BASE_SCORE = 30;
+    constexpr float COMBO_RAWORD = 1.5f;
 };
