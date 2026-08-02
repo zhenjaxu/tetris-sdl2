@@ -13,6 +13,7 @@ public:
     void RemoveActor(class Actor* actor);   
 
     class Renderer* GetRenderer() const { return mRenderer; }
+    class AudioSystem* GetAudioSystem() const { return mAudioSystem; }
     class Board* GetBoard() const { return mBoard; }
 
 private:

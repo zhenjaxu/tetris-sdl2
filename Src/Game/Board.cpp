@@ -3,6 +3,7 @@
 #include "Config.h"
 #include "BlockSpriteComponent.h"
 #include "UI.h"
+#include "AudioSystem.h"
 #include <SDL2/SDL.h>
 #include <cmath>
 
@@ -47,6 +48,7 @@ void Board::Reset()
 {
     mGrid.assign(Config::BOARD_ROW, std::vector<int>(Config::BOARD_COLUMN, -1));
     if(mScoreCounter) mScoreCounter->Reset();
+    GetGame()->GetAudioSystem()->PlayBGM();
 }
 
 bool Board::IsValid(const std::vector<Vector2>& blocks) const 
@@ -75,6 +77,7 @@ void Board::Lock(const std::vector<Vector2>& blocks, int type)
     {
         if(blocks[i].y >= 0) mGrid[blocks[i].y][blocks[i].x] = type;
     }
+    GetGame()->GetAudioSystem()->PlaySFX("Assets/success.wav", 1.0f);
 }
 
 void Board::ClearLines()
@@ -104,4 +107,6 @@ void Board::ClearLines()
     }
 
     mScoreCounter->PlusScore(lines * (int)(Config::BASE_SCORE * std::pow(Config::COMBO_RAWORD, lines - 1)));
+
+    if(lines != 0) GetGame()->GetAudioSystem()->PlaySFX("Assets/right.wav", 1.0f);
 }

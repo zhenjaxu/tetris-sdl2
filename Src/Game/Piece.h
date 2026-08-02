@@ -33,6 +33,7 @@ private:
 
     void Move(MoveType move);
     void Rotate(std::vector<Vector2>& out, const Vector2& center) const;
+    void MoveSFX(const std::vector<Vector2>& nxt);
 
     std::vector<MoveType> mInputEvent;
 

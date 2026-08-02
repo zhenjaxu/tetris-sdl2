@@ -41,6 +41,7 @@ bool Game::Initialize()
     }
 
     LoadData();
+    mAudioSystem->PlayBGM();
     mTicksCount = SDL_GetTicks();
     return true;
 }
@@ -138,7 +139,7 @@ void Game::UpdateGame()
 void Game::GenerateOutput()
 {
     mRenderer->Draw();
-    mAudioSystem->PlayBGM();
+    mAudioSystem->Update();
 }
 
 

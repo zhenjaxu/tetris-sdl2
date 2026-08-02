@@ -4,6 +4,7 @@
 #include "Config.h"
 #include "InputComponent.h"
 #include "BlockSpriteComponent.h"
+#include "AudioSystem.h"
 #include <ctime>
 #include <SDL2/SDL.h>
 
@@ -166,11 +167,13 @@ void Piece::Move(MoveType move)
         case LEFT:
             for(int i = 0; i < 4; ++i) nxt[i] = {mBlocks[i].x - 1, mBlocks[i].y};
             if(IsValid(nxt)) mPosition.x -= Config::BOARD_CELL;
+            MoveSFX(nxt);
             break;
 
         case RIGHT:
             for(int i = 0; i < 4; ++i) nxt[i] = {mBlocks[i].x + 1, mBlocks[i].y};
             if(IsValid(nxt)) mPosition.x += Config::BOARD_CELL;
+            MoveSFX(nxt);
             break;
 
         case DROP:
@@ -190,6 +193,7 @@ void Piece::Move(MoveType move)
                     center = mBlocks[i++];
                     Rotate(nxt, center);
                 }
+                MoveSFX(nxt);
             }
 
             break;
@@ -212,4 +216,19 @@ void Piece::Rotate(std::vector<Vector2>& out, const Vector2& center) const
         out[i].x = center.x - ry;
         out[i].y = center.y + rx;
     }
+}
+
+void Piece::MoveSFX(const std::vector<Vector2>& nxt)
+{
+    bool success = true;
+    for(int i = 0; i < 4; ++i)
+    {
+        if(nxt[i].x != mBlocks[i].x || nxt[i].y != mBlocks[i].y)
+        {
+            success = false;
+            break;
+        }
+    }
+    if(success) GetGame()->GetAudioSystem()->PlaySFX("Assets/dong.wav", 0.4f);
+    else GetGame()->GetAudioSystem()->PlaySFX("Assets/error.wav", 1.0f);
 }

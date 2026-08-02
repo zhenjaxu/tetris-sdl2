@@ -1,6 +1,7 @@
 #include "UI.h"
 #include "Game.h"
 #include "Board.h"
+#include "AudioSystem.h"
 #include "TextSpriteComponent.h"
 #include <string>
 
@@ -14,6 +15,8 @@ UI::UI(Game* game)
 
 void UI::Reset()
 {
+    if(mScoreCount > mLastScore) GetGame()->GetAudioSystem()->PlaySFX("Assets/heigherScore.wav");
+    else if(mLastScore != 0) GetGame()->GetAudioSystem()->PlaySFX("Assets/fail.wav");
     mLastScore = mScoreCount;
     mScoreCount = 0;
 }
