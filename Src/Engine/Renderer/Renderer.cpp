@@ -28,6 +28,7 @@ bool Renderer::Initialize()
         return false;
     }
 
+    // 字体初始化
     if (TTF_Init() == -1) {
         SDL_Log("TTF_Init failed: %s", TTF_GetError());
         return false;

@@ -35,4 +35,6 @@ private:
     class Board* mBoard;
 
     bool reset = false;
+
+    class AudioSystem* mAudioSystem;
 };

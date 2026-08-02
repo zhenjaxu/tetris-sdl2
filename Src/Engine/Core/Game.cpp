@@ -4,6 +4,7 @@
 #include "Piece.h"
 #include "Config.h"
 #include "Renderer.h"
+#include "AudioSystem.h"
 #include <algorithm>
 #include <SDL2/SDL.h>
 
@@ -18,7 +19,7 @@ Game::Game()
 
 bool Game::Initialize()
 {
-    if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO)){
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)){
         SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
         return false;
     }
@@ -28,6 +29,14 @@ bool Game::Initialize()
     {
         delete mRenderer;
         mRenderer = nullptr;
+        return false;
+    }
+
+    mAudioSystem = new AudioSystem(this);
+    if(!mAudioSystem->Initialize())
+    {
+        delete mAudioSystem;
+        mAudioSystem = nullptr;
         return false;
     }
 
@@ -49,10 +58,8 @@ void Game::RunLoop()
 void Game::Shutdown()
 {
     UnloadData();
-    if(mRenderer)
-    {
-        mRenderer->Shutdown();
-    }
+    if(mRenderer) mRenderer->Shutdown();
+    if(mAudioSystem) mAudioSystem->Shutdown();
     SDL_Quit();
 }
 
@@ -131,6 +138,7 @@ void Game::UpdateGame()
 void Game::GenerateOutput()
 {
     mRenderer->Draw();
+    mAudioSystem->PlayBGM();
 }
 
 
@@ -147,6 +155,8 @@ void Game::UnloadData()
     {
         delete mActors.back();
     }
+
+    if(mAudioSystem) mAudioSystem->UnloadData();
 }
 
 
