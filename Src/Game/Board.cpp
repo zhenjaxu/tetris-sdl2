@@ -22,8 +22,8 @@ std::shared_ptr<std::vector<Block>> Board::GetBlocks()
 
     block.w = Config::BOARD_WIDTH;
     block.h = Config::BOARD_HEIGHT;
-    block.x = 0;
-    block.y = 0;
+    block.x = -Config::WINDOW_WIDTH / 2;
+    block.y = Config::WINDOW_HEIGHT / 2;
     block.color = RGBA{0.12f, 0.12f, 0.12f, 1.0f};
     blocks->push_back(block);
 
@@ -37,8 +37,9 @@ std::shared_ptr<std::vector<Block>> Board::GetBlocks()
             if(mGrid[y][x] == -1) continue;
 
             block.color = Config::COLORS[mGrid[y][x]];
-            block.x = x * Config::BOARD_CELL + 1;
-            block.y = y * Config::BOARD_CELL + 1;
+            Vector2 pos = ToPos(Vector2{(float)x, (float)y});
+            block.x = pos.x + 1;
+            block.y = pos.y - 1;
             blocks->push_back(block);
         }
     }
@@ -111,4 +112,21 @@ void Board::ClearLines()
     mScoreCounter->PlusScore(lines * (int)(Config::BASE_SCORE * std::pow(Config::COMBO_RAWORD, lines - 1)));
 
     if(lines != 0) GetGame()->GetAudioSystem()->PlaySFX("Assets/right.wav", 1.0f);
+}
+
+// 返回方块左上角顶点位置
+Vector2 Board::ToPos(const Vector2& block)
+{
+    Vector2 pos;
+    pos.x = -Config::WINDOW_WIDTH / 2.0f + block.x * Config::BOARD_CELL;
+    pos.y = Config::WINDOW_HEIGHT / 2.0f - block.y * Config::BOARD_CELL;
+    return pos;
+}
+
+Vector2 Board::ToGrid(const Vector2& pos)
+{
+    Vector2 grid;
+    grid.x = Config::BOARD_COLUMN / 2 + std::floor((pos.x + 100.0f) / Config::BOARD_CELL); 
+    grid.y = Config::BOARD_ROW / 2 - std::ceil(pos.y / Config::BOARD_CELL); 
+    return grid;
 }

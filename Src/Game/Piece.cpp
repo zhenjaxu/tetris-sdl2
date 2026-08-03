@@ -6,6 +6,8 @@
 #include "AudioSystem.h"
 #include "Random.h"
 
+#include <SDL2/SDL.h>
+
 Piece::Piece(Game* game, Board* board)
 : Actor(game)
 , mBoard(board)
@@ -31,9 +33,9 @@ void Piece::UpdateActor(float deltaTime)
     }
     mInputEvent.clear();
 
-    Vector2 prev = ToGrid(mPosition);
-    mPosition.y += mDropSpeed * deltaTime;
-    Vector2 curr = ToGrid(mPosition);
+    Vector2 prev = Board::ToGrid(mPosition);
+    mPosition.y -= mDropSpeed * deltaTime;
+    Vector2 curr = Board::ToGrid(mPosition);
     if(curr.y != prev.y) Move(DROP);
 }
 
@@ -41,16 +43,19 @@ std::shared_ptr<std::vector<Block>> Piece::GetBlocks()
 {
     auto blocks = std::make_shared<std::vector<Block>>();
 
-    // 显示即将生成的方块
-    RGBA c = Config::COLORS[mNextType];
     Block block;
+    Vector2 pos;
     block.w = Config::BOARD_CELL - 2;
     block.h = Config::BOARD_CELL - 2;
+
+    // 显示即将生成的方块
+    RGBA c = Config::COLORS[mNextType];
     for(int i = 0; i < 4; ++i)
     {
         block.blend = false;
-        block.x = mNext[i].x * Config::BOARD_CELL + 1;
-        block.y = mNext[i].y * Config::BOARD_CELL + 1;
+        pos = Board::ToPos(mNext[i]);
+        block.x = pos.x + 1; 
+        block.y = pos.y - 1;
         block.color = c;
         blocks->push_back(block);
     }
@@ -61,18 +66,20 @@ std::shared_ptr<std::vector<Block>> Piece::GetBlocks()
         if(mGhost[i].y < 0) continue;
 
         block.blend = true;
-        c.a = 80;
-        block.x = mGhost[i].x * Config::BOARD_CELL + 1;
-        block.y = mGhost[i].y * Config::BOARD_CELL + 1;
+        c.a = 0.3f;
+        pos = Board::ToPos(mGhost[i]);
+        block.x = pos.x + 1;
+        block.y = pos.y - 1;
         block.color = c;
         blocks->push_back(block);
 
         if(mBlocks[i].y < 0) continue;
         
         block.blend = false;
-        c.a = 255;
-        block.x = mBlocks[i].x * Config::BOARD_CELL + 1;
-        block.y = mBlocks[i].y * Config::BOARD_CELL + 1;
+        c.a = 1.0f;
+        pos = Board::ToPos(mBlocks[i]);
+        block.x = pos.x + 1;
+        block.y = pos.y - 1;
         block.color = c;
         blocks->push_back(block);
     }
@@ -98,27 +105,25 @@ void Piece::Lock()
     }
 }
 
-void Piece::Spawn(){ 
+void Piece::Spawn()
+{ 
     if(mType == -1) mType = Random::GetIntRange(0, 6);
     else mType = mNextType;
     mNextType = Random::GetIntRange(0, 6);
 
     // 即将生成的方块
-    Vector2 NextPos;
-    NextPos.x = Config::BOARD_COLUMN + 3 - Config::BOARD_COLUMN / 2;
-    NextPos.y = Config::BOARD_ROW / 2 - 3;
+    Vector2 NextPos{Config::BOARD_COLUMN + 3.0f, 3.0f};
     for(int i = 0; i < 4; ++i)
     {
         mNext[i].x = Config::SHAPES[mNextType][i].x + NextPos.x;
-        mNext[i].y = -Config::SHAPES[mNextType][i].y + NextPos.y;
+        mNext[i].y = Config::SHAPES[mNextType][i].y + NextPos.y;
     }
 
-    mPosition.x = 0;
-    mPosition.y = Config::HEIGHT / 2 - Config::BOARD_CELL;
-    Vector2 center = ToGrid(mPosition);
+    Vector2 center{Config::BOARD_COLUMN / 2.0f, 1.0f};
+    mPosition = Board::ToPos(center);
     for(int i = 0; i < 4; ++i)
     {
-        mBlocks[i].x = Config::SHAPES[mType][i].x + center.x;
+        mBlocks[i].x = Config::SHAPES[mType][i].x + center.x;   
         mBlocks[i].y = Config::SHAPES[mType][i].y + center.y;
     }
     
@@ -175,15 +180,26 @@ void Piece::Move(MoveType move)
         case ROTATE: 
             // 踢墙  
             {
-                Vector2 center = ToGrid(mPosition);
+                Vector2 center = Board::ToGrid(mPosition);
+                for(int i = 0; i < 4; ++i) nxt[i] = Vector2{mBlocks[i].x, mBlocks[i].y};
                 Rotate(nxt, center);
 
-                int i = 0;
-                while(!IsValid(nxt) && i < 4)
+                if(!IsValid(nxt))
                 {
-                    center = mBlocks[i++];
-                    Rotate(nxt, center);
+                    for(auto kick : Config::WALL_KICK)
+                    {
+                        Vector2 k(kick.x, kick.y);
+                        for(int i = 0; i < 4; ++i) nxt[i] = mBlocks[i] + k;
+                        Rotate(nxt, center + k);
+
+                        if(IsValid(nxt)){
+                            mPosition.x += k.x * Config::BOARD_CELL;
+                            mPosition.y -= k.y * Config::BOARD_CELL;
+                            break;
+                        }
+                    }
                 }
+
                 MoveSFX(nxt);
             }
 
@@ -203,14 +219,14 @@ void Piece::Move(MoveType move)
     }
 }
 
-void Piece::Rotate(std::vector<Vector2>& out, const Vector2& center) const 
+void Piece::Rotate(std::vector<Vector2>& nxt, const Vector2& center) const 
 {
     for(int i = 0; i < 4; ++i)
     {
-        int rx = mBlocks[i].x - center.x;
-        int ry = mBlocks[i].y - center.y;
-        out[i].x = center.x - ry;
-        out[i].y = center.y + rx;
+        float rx = nxt[i].x - center.x;
+        float ry = nxt[i].y - center.y;
+        nxt[i].x = center.x - ry;
+        nxt[i].y = center.y + rx;
     }
 }
 
@@ -227,12 +243,4 @@ void Piece::MoveSFX(const std::vector<Vector2>& nxt)
     }
     if(success) GetGame()->GetAudioSystem()->PlaySFX("Assets/dong.wav", 0.4f);
     else GetGame()->GetAudioSystem()->PlaySFX("Assets/error.wav", 1.0f);
-}
-
-Vector2 Piece::ToGrid(const Vector2& pos)
-{
-    Vector2 grid;
-    grid.x = static_cast<int>(pos.x / Config::BOARD_CELL); 
-    grid.y = static_cast<int>(pos.y / Config::BOARD_CELL); 
-    return grid;
 }

@@ -29,7 +29,7 @@ void BlockSpriteComponent::DrawBlocks(Shader* shader, const std::shared_ptr<std:
     {
         Matrix4 world = Matrix4::CreateScale(block.w, block.h, 1.0f);
         world *= Matrix4::CreateRotationZ(0.0f);
-        world *= Matrix4::CreateTranslation(Vector3(block.x + block.w / 2, block.y + block.h / 2, 0.0f));
+        world *= Matrix4::CreateTranslation(Vector3(block.x + block.w / 2.0f, block.y - block.h / 2.0f, 0.0f));
         shader->SetMatrixUniform("uWorldTransform", world);
 
         if (block.blend) 

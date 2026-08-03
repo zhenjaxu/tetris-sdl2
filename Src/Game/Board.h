@@ -14,6 +14,9 @@ public:
     void ClearLines();                  // 消除已满的行
     void Reset();                       // 清空棋盘
 
+    static Vector2 ToPos(const Vector2& block);
+    static Vector2 ToGrid(const Vector2& pos);
+
     std::shared_ptr<std::vector<Block>> GetBlocks();
 
 private:

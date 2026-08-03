@@ -29,12 +29,11 @@ public:
 
 private:
     void Lock(); 
-    Vector2 ToGrid(const Vector2& pos);
     bool IsValid(const std::vector<Vector2>& blocks);   
     void CalculateGhost(std::vector<Vector2>& ghost) const;
 
     void Move(MoveType move);
-    void Rotate(std::vector<Vector2>& out, const Vector2& center) const;
+    void Rotate(std::vector<Vector2>& nxt, const Vector2& center) const;
     void MoveSFX(const std::vector<Vector2>& nxt);
 
     std::vector<MoveType> mInputEvent;

@@ -21,7 +21,7 @@ struct Block
 struct Text
 {
     std::string content;
-    int x, y;
+    float x, y;
     RGBA color;
 };
 
@@ -54,6 +54,10 @@ namespace Config
         {{0,-1}, {0,0}, {0,1}, {-1,1}},
         {{1,0}, {0,0}, {0,1}, {-1,1}},
         {{-1,0}, {0,0}, {0,1}, {1,1}}
+    };
+
+    constexpr XY WALL_KICK[6] = {
+        {1, 0}, {-1, 0}, {0, -1}, {2, 0}, {-2, 0}, {0, -2}
     };
 
     constexpr int BASE_SCORE = 30;
