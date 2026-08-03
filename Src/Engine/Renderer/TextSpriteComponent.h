@@ -9,8 +9,8 @@ class TextSpriteComponent : SpriteComponent
 {
 public:
     TextSpriteComponent(class Actor* owner, int drawOrder = 100);
-    void Draw(SDL_Renderer* renderer) override;
+    void Draw(class Shader* shader) override;
 
 private:
-    void DrawTexts(SDL_Renderer* renderer, std::shared_ptr<std::vector<Text>> texts);
+    void DrawTexts(class Shader* shader, std::shared_ptr<std::vector<Text>> texts);
 };

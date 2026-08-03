@@ -69,3 +69,18 @@ void Actor::RemoveComponent(Component* component)
         mComponents.erase(iter);
     }
 }
+
+void Actor::ComputeWorldTransform(){
+    if(mRecomputeWorldTransform){
+        mRecomputeWorldTransform=false;
+
+        mWorldTransform = Matrix4::CreateScale(mScale);
+        mWorldTransform *= Matrix4::CreateRotationZ(mRotation);
+        mWorldTransform *= Matrix4::CreateTranslation(Vector3(mPosition.x, mPosition.y, 0.0f));
+
+        // 通知组件做出响应
+        for(auto comp:mComponents){
+            comp->OnUpdateWorldTransform();
+        }
+    }
+}

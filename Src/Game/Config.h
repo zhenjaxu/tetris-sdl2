@@ -1,10 +1,9 @@
 #pragma once
 #include <string>
-#include <cstdint>
 
 struct RGBA
 {
-    uint8_t r, g, b, a;
+    float r, g, b, a;
 };
 
 struct XY
@@ -15,7 +14,7 @@ struct XY
 struct Block
 {
     bool blend;
-    int x, y, w, h;
+    float x, y, w, h;
     RGBA color;
 };
 
@@ -43,8 +42,8 @@ namespace Config
     constexpr float SOFT_DROP = 300.0f;
 
     constexpr RGBA COLORS[7] = {
-        {0,255,255,255}, {128,0,128,255}, {255,255,0,255}, {255,165,0,255}, 
-        {0,0,255,255}, {0,255,0,255}, {255,0,0,255}
+        {0, 1.0f, 1.0f, 1.0f}, {0.5f, 0, 0.5f, 1.0f}, {1.0f, 1.0f, 0, 1.0f}, {1.0f, 0.5f, 0, 1.0f}, 
+        {0, 0, 1.0f, 1.0f}, {0, 1.0f, 0, 1.0f}, {1.0f, 0, 0, 1.0f}
     };
 
     constexpr XY SHAPES[7][4] = {

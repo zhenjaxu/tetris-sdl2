@@ -105,16 +105,16 @@ void Piece::Spawn(){
 
     // 即将生成的方块
     Vector2 NextPos;
-    NextPos.x = Config::BOARD_COLUMN + 3;
-    NextPos.y = 3;
+    NextPos.x = Config::BOARD_COLUMN + 3 - Config::BOARD_COLUMN / 2;
+    NextPos.y = Config::BOARD_ROW / 2 - 3;
     for(int i = 0; i < 4; ++i)
     {
         mNext[i].x = Config::SHAPES[mNextType][i].x + NextPos.x;
-        mNext[i].y = Config::SHAPES[mNextType][i].y + NextPos.y;
+        mNext[i].y = -Config::SHAPES[mNextType][i].y + NextPos.y;
     }
 
-    mPosition.x = Config::BOARD_WIDTH / 2;
-    mPosition.y = Config::BOARD_CELL;
+    mPosition.x = 0;
+    mPosition.y = Config::HEIGHT / 2 - Config::BOARD_CELL;
     Vector2 center = ToGrid(mPosition);
     for(int i = 0; i < 4; ++i)
     {

@@ -20,6 +20,9 @@ public:
     void ProcessInput(const uint8_t* keyState);
     virtual void ActorInput(const uint8_t* keyState){}
 
+    void ComputeWorldTransform();
+    const Matrix4& GetWorldTransform() const { return mWorldTransform; }
+
     void AddComponent(class Component* component);
     void RemoveComponent(class Component* component);
 
@@ -35,11 +38,29 @@ public:
     void SetScale(float scale){ mScale = scale; }
     void SetRotation(float rotation){ mRotation = rotation; }
 
+    template<typename T>
+    T* GetComponent() const
+    {
+        for(auto comp:mComponents)
+        {
+            T* find = dynamic_cast<T*>(comp);
+            if(find != nullptr)
+            {
+                return find;
+            }
+        }
+
+        return nullptr;
+    }
+
 protected:
     State mState;
     Vector2 mPosition;
     float mScale;
     float mRotation;
+
+    Matrix4 mWorldTransform;
+    bool mRecomputeWorldTransform;
 
     std::vector<class Component*> mComponents;
     class Game* mGame;

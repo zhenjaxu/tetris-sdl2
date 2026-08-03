@@ -14,6 +14,9 @@ set(SRC_FILES
     Src/Engine/Renderer/SpriteComponent.cpp
     Src/Engine/Renderer/BlockSpriteComponent.cpp
     Src/Engine/Renderer/TextSpriteComponent.cpp
+    Src/Engine/Renderer/Shader.cpp
+    Src/Engine/Renderer/Texture.cpp
+    Src/Engine/Renderer/VertexArray.cpp
     Src/Engine/Audio/AudioSystem.cpp
     Src/Engine/Utils/Math.cpp
     Src/Engine/Utils/Random.cpp
@@ -25,6 +28,7 @@ set(SRC_FILES
 # SDL2路径
 set(SDL2_DIR D:/SDL2)
 set(FMOD_DIR D:/FMOD1.09)
+set(GLEW_DIR D:/GLEW)
 
 add_executable(${PROJECT_NAME} ${SRC_FILES})
 
@@ -43,3 +47,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE SDL2 SDL2_ttf)
 target_include_directories(${PROJECT_NAME} PRIVATE ${FMOD_DIR}/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${FMOD_DIR}/lib)
 target_link_libraries(${PROJECT_NAME} PRIVATE fmod64)
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${GLEW_DIR}/include)
+target_link_directories(${PROJECT_NAME} PRIVATE ${GLEW_DIR}/lib)
+target_link_libraries(${PROJECT_NAME} PRIVATE glew32 opengl32)

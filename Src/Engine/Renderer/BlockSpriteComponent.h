@@ -3,14 +3,14 @@
 #include "Config.h"
 #include <memory>
 #include <vector>
-#include <SDL2/SDL.h>
+// #include <SDL2/SDL.h>
 
 class BlockSpriteComponent : SpriteComponent
 {
 public:
     BlockSpriteComponent(class Actor* owner, int drawOrder = 100);
-    void Draw(SDL_Renderer* renderer) override;
+    void Draw(class Shader* shader) override;
 
 private:
-    void DrawBlocks(SDL_Renderer* renderer, const std::shared_ptr<std::vector<Block>>& blocks);
+    void DrawBlocks(class Shader* shader, const std::shared_ptr<std::vector<Block>>& blocks);
 };

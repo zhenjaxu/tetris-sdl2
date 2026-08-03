@@ -19,6 +19,14 @@ std::shared_ptr<std::vector<Block>> Board::GetBlocks()
     auto blocks = std::make_shared<std::vector<Block>>();
     Block block;
     block.blend = false;
+
+    block.w = Config::BOARD_WIDTH;
+    block.h = Config::BOARD_HEIGHT;
+    block.x = 0;
+    block.y = 0;
+    block.color = RGBA{0.12f, 0.12f, 0.12f, 1.0f};
+    blocks->push_back(block);
+
     block.w = Config::BOARD_CELL - 2;
     block.h = Config::BOARD_CELL - 2;
 

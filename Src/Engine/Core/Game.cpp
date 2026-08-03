@@ -146,6 +146,7 @@ void Game::UnloadData()
         delete mActors.back();
     }
 
+    if(mRenderer) mRenderer->UnloadData();
     if(mAudioSystem) mAudioSystem->UnloadData();
 }
 
