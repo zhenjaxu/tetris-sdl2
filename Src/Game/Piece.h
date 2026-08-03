@@ -1,5 +1,6 @@
 #pragma once
 #include "Actor.h"
+#include "Math.h"
 #include "Config.h"
 #include <vector>
 #include <memory>
@@ -28,6 +29,7 @@ public:
 
 private:
     void Lock(); 
+    Vector2 ToGrid(const Vector2& pos);
     bool IsValid(const std::vector<Vector2>& blocks);   
     void CalculateGhost(std::vector<Vector2>& ghost) const;
 

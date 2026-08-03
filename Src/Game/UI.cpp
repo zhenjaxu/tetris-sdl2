@@ -26,7 +26,7 @@ std::shared_ptr<std::vector<Text>> UI::GetTexts()
     auto texts = std::make_shared<std::vector<Text>>();
 
     Text text;
-    text.color = Color{255, 255, 255, 255};
+    text.color = RGBA{255, 255, 255, 255};
 
     // 文字
     text.x = Config::BOARD_WIDTH + 10;

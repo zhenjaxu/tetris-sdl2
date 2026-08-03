@@ -1,5 +1,6 @@
 #pragma once
 #include "Actor.h"
+#include "Math.h"
 #include "Config.h"
 #include <vector>
 #include <memory>

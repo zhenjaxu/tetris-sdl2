@@ -4,8 +4,7 @@
 #include "InputComponent.h"
 #include "BlockSpriteComponent.h"
 #include "AudioSystem.h"
-#include "Math.h"
-#include <ctime>
+#include "Random.h"
 
 Piece::Piece(Game* game, Board* board)
 : Actor(game)
@@ -20,7 +19,6 @@ Piece::Piece(Game* game, Board* board)
     auto ic = new InputComponent(this);
     auto bsc = new BlockSpriteComponent(this);
 
-    srand((unsigned)time(nullptr));
     Spawn();
 }
 
@@ -33,9 +31,9 @@ void Piece::UpdateActor(float deltaTime)
     }
     mInputEvent.clear();
 
-    Vector2 prev = Math::ToGrid(mPosition);
+    Vector2 prev = ToGrid(mPosition);
     mPosition.y += mDropSpeed * deltaTime;
-    Vector2 curr = Math::ToGrid(mPosition);
+    Vector2 curr = ToGrid(mPosition);
     if(curr.y != prev.y) Move(DROP);
 }
 
@@ -44,7 +42,7 @@ std::shared_ptr<std::vector<Block>> Piece::GetBlocks()
     auto blocks = std::make_shared<std::vector<Block>>();
 
     // 显示即将生成的方块
-    Color c = Config::COLORS[mNextType];
+    RGBA c = Config::COLORS[mNextType];
     Block block;
     block.w = Config::BOARD_CELL - 2;
     block.h = Config::BOARD_CELL - 2;
@@ -101,9 +99,9 @@ void Piece::Lock()
 }
 
 void Piece::Spawn(){ 
-    if(mType == -1) mType = rand() % 7;
+    if(mType == -1) mType = Random::GetIntRange(0, 6);
     else mType = mNextType;
-    mNextType = rand() % 7;
+    mNextType = Random::GetIntRange(0, 6);
 
     // 即将生成的方块
     Vector2 NextPos;
@@ -117,7 +115,7 @@ void Piece::Spawn(){
 
     mPosition.x = Config::BOARD_WIDTH / 2;
     mPosition.y = Config::BOARD_CELL;
-    Vector2 center = Math::ToGrid(mPosition);
+    Vector2 center = ToGrid(mPosition);
     for(int i = 0; i < 4; ++i)
     {
         mBlocks[i].x = Config::SHAPES[mType][i].x + center.x;
@@ -145,7 +143,7 @@ void Piece::CalculateGhost(std::vector<Vector2>& ghost) const
     while(true)
     {
         std::vector<Vector2> nxt(4);
-        for(int i = 0; i < 4; ++i) nxt[i]= {ghost[i].x, ghost[i].y + 1};
+        for(int i = 0; i < 4; ++i) nxt[i]= Vector2{ghost[i].x, ghost[i].y + 1};
         if(!mBoard->IsValid(nxt)) break;
         for(int i = 0; i < 4; ++i) ghost[i] = nxt[i];
     }
@@ -158,26 +156,26 @@ void Piece::Move(MoveType move)
     switch(move)
     {
         case LEFT:
-            for(int i = 0; i < 4; ++i) nxt[i] = {mBlocks[i].x - 1, mBlocks[i].y};
+            for(int i = 0; i < 4; ++i) nxt[i] = Vector2{mBlocks[i].x - 1, mBlocks[i].y};
             if(IsValid(nxt)) mPosition.x -= Config::BOARD_CELL;
             MoveSFX(nxt);
             break;
 
         case RIGHT:
-            for(int i = 0; i < 4; ++i) nxt[i] = {mBlocks[i].x + 1, mBlocks[i].y};
+            for(int i = 0; i < 4; ++i) nxt[i] = Vector2{mBlocks[i].x + 1, mBlocks[i].y};
             if(IsValid(nxt)) mPosition.x += Config::BOARD_CELL;
             MoveSFX(nxt);
             break;
 
         case DROP:
-            for(int i = 0; i < 4; ++i) nxt[i] = {mBlocks[i].x, mBlocks[i].y + 1};
+            for(int i = 0; i < 4; ++i) nxt[i] = Vector2{mBlocks[i].x, mBlocks[i].y + 1};
             if(!IsValid(nxt)) Lock();
             break;
 
         case ROTATE: 
             // 踢墙  
             {
-                Vector2 center = Math::ToGrid(mPosition);
+                Vector2 center = ToGrid(mPosition);
                 Rotate(nxt, center);
 
                 int i = 0;
@@ -229,4 +227,12 @@ void Piece::MoveSFX(const std::vector<Vector2>& nxt)
     }
     if(success) GetGame()->GetAudioSystem()->PlaySFX("Assets/dong.wav", 0.4f);
     else GetGame()->GetAudioSystem()->PlaySFX("Assets/error.wav", 1.0f);
+}
+
+Vector2 Piece::ToGrid(const Vector2& pos)
+{
+    Vector2 grid;
+    grid.x = static_cast<int>(pos.x / Config::BOARD_CELL); 
+    grid.y = static_cast<int>(pos.y / Config::BOARD_CELL); 
+    return grid;
 }

@@ -15,6 +15,8 @@ set(SRC_FILES
     Src/Engine/Renderer/BlockSpriteComponent.cpp
     Src/Engine/Renderer/TextSpriteComponent.cpp
     Src/Engine/Audio/AudioSystem.cpp
+    Src/Engine/Utils/Math.cpp
+    Src/Engine/Utils/Random.cpp
     Src/Game/Board.cpp
     Src/Game/Piece.cpp
     Src/Game/UI.cpp
@@ -30,7 +32,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     Src/Engine/Core
     Src/Engine/Renderer
     Src/Engine/Audio
-    Src/Common
+    Src/Engine/Utils
     Src/Game
 )
 

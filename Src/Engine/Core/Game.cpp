@@ -5,6 +5,7 @@
 #include "Config.h"
 #include "Renderer.h"
 #include "AudioSystem.h"
+#include "Random.h"
 #include <algorithm>
 #include <SDL2/SDL.h>
 
@@ -37,6 +38,7 @@ bool Game::Initialize()
         return false;
     }
 
+    Random::Init();
     LoadData();
     mAudioSystem->PlayBGM();
     mTicksCount = SDL_GetTicks();

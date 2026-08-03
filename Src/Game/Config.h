@@ -2,12 +2,12 @@
 #include <string>
 #include <cstdint>
 
-struct Color
+struct RGBA
 {
     uint8_t r, g, b, a;
 };
 
-struct Vector2
+struct XY
 {
     float x, y;
 };
@@ -16,14 +16,14 @@ struct Block
 {
     bool blend;
     int x, y, w, h;
-    Color color;
+    RGBA color;
 };
 
 struct Text
 {
     std::string content;
     int x, y;
-    Color color;
+    RGBA color;
 };
 
 namespace Config
@@ -42,12 +42,12 @@ namespace Config
     constexpr float DROP_SPEED = 60.0f;
     constexpr float SOFT_DROP = 300.0f;
 
-    constexpr Color COLORS[7] = {
+    constexpr RGBA COLORS[7] = {
         {0,255,255,255}, {128,0,128,255}, {255,255,0,255}, {255,165,0,255}, 
         {0,0,255,255}, {0,255,0,255}, {255,0,0,255}
     };
 
-    constexpr Vector2 SHAPES[7][4] = {
+    constexpr XY SHAPES[7][4] = {
         {{0,-1}, {0,0}, {0,1}, {0,2}},
         {{-1,0}, {0,0}, {1,0}, {0,1}},
         {{1,0}, {0,0}, {0,1}, {1,1}},
