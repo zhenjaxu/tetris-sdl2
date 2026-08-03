@@ -11,11 +11,8 @@
 Game::Game()
 : mRenderer(nullptr)
 , mIsRunning(true)
-, mPiece(nullptr)
 , mTicksCount(0)
 {}
-
-
 
 bool Game::Initialize()
 {
@@ -64,8 +61,6 @@ void Game::Shutdown()
     SDL_Quit();
 }
 
-
-
 void Game::ProcessInput()
 {
     SDL_Event event;
@@ -82,12 +77,6 @@ void Game::ProcessInput()
     {
         mIsRunning = false;
     }
-    if(keyState[SDL_SCANCODE_R] && !reset)
-    {
-        mBoard->Reset();
-        mPiece->Spawn();
-    }
-    reset = keyState[SDL_SCANCODE_R];
 
     mUpdatingActors = true;
 	for (auto actor : mActors)
@@ -142,12 +131,10 @@ void Game::GenerateOutput()
     mAudioSystem->Update();
 }
 
-
-
 void Game::LoadData()
 {
-    mBoard = new Board(this);
-    mPiece = new Piece(this, mBoard);
+    auto board = new Board(this);
+    auto piece = new Piece(this, board);
 }
 
 void Game::UnloadData()
@@ -159,8 +146,6 @@ void Game::UnloadData()
 
     if(mAudioSystem) mAudioSystem->UnloadData();
 }
-
-
 
 void Game::AddActor(Actor* actor)
 {

@@ -14,7 +14,6 @@ public:
 
     class Renderer* GetRenderer() const { return mRenderer; }
     class AudioSystem* GetAudioSystem() const { return mAudioSystem; }
-    class Board* GetBoard() const { return mBoard; }
 
 private:
     void ProcessInput();   
@@ -31,11 +30,6 @@ private:
     bool mUpdatingActors;
     std::vector<class Actor*> mActors;
     std::vector<class Actor*> mPendingActors;
-
-    class Piece* mPiece;
-    class Board* mBoard;
-
-    bool reset = false;
 
     class AudioSystem* mAudioSystem;
 };

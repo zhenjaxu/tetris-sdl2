@@ -2,8 +2,6 @@
 #include "Actor.h"
 #include "Board.h"
 #include "Piece.h"
-#include "Config.h"
-#include <SDL2/SDL.h>
 
 BlockSpriteComponent::BlockSpriteComponent(Actor* owner, int drawOrder)
 : SpriteComponent(owner, drawOrder)

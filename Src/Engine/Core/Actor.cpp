@@ -1,7 +1,6 @@
 #include "Actor.h"
 #include "Game.h"
 #include "Component.h"
-#include <SDL2/SDL.h>
 #include <algorithm>
 
 Actor::Actor(Game* game)
@@ -23,8 +22,6 @@ Actor::~Actor()
 
     mGame->RemoveActor(this);
 }
-
-
 
 void Actor::Update(float deltaTime)
 {
@@ -49,8 +46,6 @@ void Actor::ProcessInput(const uint8_t* keyState)
         ActorInput(keyState);
     }
 }
-
-
 
 void Actor::AddComponent(Component* component)
 {

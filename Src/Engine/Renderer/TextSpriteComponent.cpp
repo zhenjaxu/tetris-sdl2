@@ -1,7 +1,6 @@
 #include "TextSpriteComponent.h"
 #include "Actor.h"
 #include "Game.h"
-#include "Config.h"
 #include "Renderer.h"
 #include "UI.h"
 #include <SDL2/SDL_ttf.h>

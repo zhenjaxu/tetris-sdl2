@@ -3,7 +3,6 @@
 #include "Game.h"
 #include "Renderer.h"
 #include "Math.h"
-#include <SDL2/SDL.h>
 
 SpriteComponent::SpriteComponent(Actor* owner, int drawOrder)
 : Component(owner)
@@ -18,7 +17,6 @@ SpriteComponent::~SpriteComponent()
 {
     mOwner->GetGame()->GetRenderer()->RemoveSprite(this);
 }
-
 
 void SpriteComponent::Draw(SDL_Renderer* renderer)
 {

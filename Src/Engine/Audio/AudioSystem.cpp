@@ -1,7 +1,6 @@
 #include "AudioSystem.h"
 #include "Game.h"
 #include <SDL2/SDL.h>
-#include <fmod.h>
 #include <fmod_errors.h>
 
 AudioSystem::AudioSystem(Game* game)

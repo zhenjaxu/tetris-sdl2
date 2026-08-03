@@ -1,14 +1,16 @@
 #pragma once
 #include "SpriteComponent.h"
+#include "Config.h"
 #include <memory>
 #include <vector>
+#include <SDL2/SDL.h>
 
 class BlockSpriteComponent : SpriteComponent
 {
 public:
     BlockSpriteComponent(class Actor* owner, int drawOrder = 100);
-    void Draw(class SDL_Renderer* renderer) override;
+    void Draw(SDL_Renderer* renderer) override;
 
 private:
-    void DrawBlocks(class SDL_Renderer* renderer, const std::shared_ptr<std::vector<struct Block>>& blocks);
+    void DrawBlocks(SDL_Renderer* renderer, const std::shared_ptr<std::vector<Block>>& blocks);
 };

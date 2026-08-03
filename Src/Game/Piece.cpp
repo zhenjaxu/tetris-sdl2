@@ -1,12 +1,11 @@
 #include "Piece.h"
 #include "Board.h"
 #include "Game.h"
-#include "Config.h"
 #include "InputComponent.h"
 #include "BlockSpriteComponent.h"
 #include "AudioSystem.h"
+#include "Math.h"
 #include <ctime>
-#include <SDL2/SDL.h>
 
 Piece::Piece(Game* game, Board* board)
 : Actor(game)
@@ -83,14 +82,10 @@ std::shared_ptr<std::vector<Block>> Piece::GetBlocks()
     return blocks;
 }
 
-
-
 void Piece::SendInput(MoveType move)
 {
     mInputEvent.emplace_back(move);
 }
-
-
 
 void Piece::Lock()
 {
@@ -156,8 +151,6 @@ void Piece::CalculateGhost(std::vector<Vector2>& ghost) const
     }
 }
 
-
-
 void Piece::Move(MoveType move)
 {
     std::vector<Vector2> nxt(4);
@@ -201,6 +194,11 @@ void Piece::Move(MoveType move)
         case HARD_DROP:
             for(int i = 0; i < 4; ++i) mBlocks[i] = mGhost[i];
             Lock();
+            break;
+
+        case RESET:
+            mBoard->Reset();
+            Spawn();
             break;
 
         default: break;

@@ -4,8 +4,6 @@
 #include "Config.h"
 #include "SpriteComponent.h"
 #include <algorithm>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
 
 Renderer::Renderer(Game* game)
 : mGame(game)
@@ -67,8 +65,6 @@ void Renderer::Draw()
 
     SDL_RenderPresent(mRenderer);
 }
-
-
 
 void Renderer::AddSprite(SpriteComponent* sprite)
 {

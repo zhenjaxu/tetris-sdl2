@@ -1,10 +1,8 @@
 #include "Board.h"
 #include "Game.h"
-#include "Config.h"
 #include "BlockSpriteComponent.h"
 #include "UI.h"
 #include "AudioSystem.h"
-#include <SDL2/SDL.h>
 #include <cmath>
 
 Board::Board(Game* game)
@@ -15,8 +13,6 @@ Board::Board(Game* game)
 
     Reset();
 }
-
-
 
 std::shared_ptr<std::vector<Block>> Board::GetBlocks()
 {
@@ -41,8 +37,6 @@ std::shared_ptr<std::vector<Block>> Board::GetBlocks()
 
     return blocks;
 }
-
-
 
 void Board::Reset()
 {

@@ -1,6 +1,6 @@
 #pragma once
 #include "Actor.h"
-#include "Math.h"
+#include "Config.h"
 #include <vector>
 #include <memory>
 
@@ -12,11 +12,11 @@ public:
         RIGHT,
         DROP,
         ROTATE,
-        HARD_DROP
+        HARD_DROP,
+        RESET
     };
 
     Piece(class Game* game, class Board* board);
-
     void UpdateActor(float deltaTime) override;
 
     void SendInput(MoveType move);

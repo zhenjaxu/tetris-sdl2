@@ -12,5 +12,6 @@ private:
     bool mPrevA;
     bool mPrevD;
     bool mPrevW;
+    bool mPrevR;
     bool mPrevSpace;
 };

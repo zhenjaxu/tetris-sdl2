@@ -9,6 +9,7 @@ InputComponent::InputComponent(Actor* owner)
 , mPrevA(false)
 , mPrevD(false)
 , mPrevW(false)
+, mPrevR(false)
 , mPrevSpace(false)
 {}
 
@@ -17,6 +18,7 @@ void InputComponent::ProcessInput(const uint8_t* keyState)
     bool A = keyState[SDL_SCANCODE_A];
     bool D = keyState[SDL_SCANCODE_D];
     bool W = keyState[SDL_SCANCODE_W];
+    bool R = keyState[SDL_SCANCODE_R];
     bool Space = keyState[SDL_SCANCODE_SPACE];
 
     if(auto find = dynamic_cast<Piece*>(mOwner))
@@ -24,6 +26,7 @@ void InputComponent::ProcessInput(const uint8_t* keyState)
         if(A && !mPrevA) find->SendInput(Piece::LEFT);
         if(D && !mPrevD) find->SendInput(Piece::RIGHT);
         if(W && !mPrevW) find->SendInput(Piece::ROTATE);
+        if(R && !mPrevR) find->SendInput(Piece::RESET);
         if(Space && !mPrevSpace) find->SendInput(Piece::HARD_DROP);
 
         find->SetDropSpeed(keyState[SDL_SCANCODE_S] ? Config::SOFT_DROP : Config::DROP_SPEED);
@@ -32,5 +35,6 @@ void InputComponent::ProcessInput(const uint8_t* keyState)
     mPrevA = A;
     mPrevD = D;
     mPrevW = W;
+    mPrevR = R;
     mPrevSpace = Space;
 }
