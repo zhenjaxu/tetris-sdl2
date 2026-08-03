@@ -112,7 +112,7 @@ void Renderer::UnloadData()
 
 void Renderer::Draw()
 {
-    glClearColor(0.04f, 0.04f, 0.04f, 1.0f);
+    glClearColor(0.f, 0.f, 0.f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     mSpriteShader->SetActive();
@@ -123,19 +123,6 @@ void Renderer::Draw()
     }
 
     SDL_GL_SwapWindow(mWindow);
-
-    // SDL_SetRenderDrawColor(mRenderer, 10, 10, 10, 255);
-    // SDL_RenderClear(mRenderer);
-    // SDL_SetRenderDrawColor(mRenderer, 30, 30, 30, 255);
-    // SDL_Rect rc = {0, 0, (int)Config::BOARD_WIDTH, (int)Config::BOARD_HEIGHT};
-    // SDL_RenderFillRect(mRenderer, &rc);
-
-    // for(auto sprite : mSprites)
-    // {
-    //     sprite->Draw(mRenderer);
-    // }
-
-    // SDL_RenderPresent(mRenderer);
 }
 
 void Renderer::AddSprite(SpriteComponent* sprite)
@@ -192,7 +179,7 @@ void Renderer::CreateSpriteVerts()
 		 0.5f, -0.5f, 0.f, 1.f, 1.f,
 		-0.5f, -0.5f, 0.f, 0.f, 1.f
 	};
-
+    
 	unsigned int indices[] = {
 		0, 1, 2,
 		2, 3, 0

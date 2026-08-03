@@ -10,13 +10,9 @@ uniform bool uUseTexture;
 
 void main()
 {
-    vec4 color;
-    
     if (uUseTexture) {
-        color = texture(uTexture, fragTexCoord);
+        outColor = texture(uTexture, fragTexCoord);
     } else {
-        color = uColor;
+        outColor = uColor;
     }
-    
-    outColor = color;
 }

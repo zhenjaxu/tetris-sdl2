@@ -23,6 +23,11 @@ SpriteComponent::~SpriteComponent()
 
 void SpriteComponent::Draw(Shader* shader)
 {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    shader->SetBoolUniform("uUseTexture", true);
+
     Matrix4 scaleMat = Matrix4::CreateScale(
         static_cast<float>(mTexWidth),
         static_cast<float>(mTexHeight),
@@ -34,17 +39,6 @@ void SpriteComponent::Draw(Shader* shader)
 
     mTexture->SetActive();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
-    // SDL_Rect r;
-    // r.w = static_cast<int>(mTexWidth * mOwner->GetScale());
-    // r.h = static_cast<int>(mTexHeight * mOwner->GetScale());
-    // r.x = static_cast<int>(mOwner->GetPosition().x - r.w / 2);
-    // r.y = static_cast<int>(mOwner->GetPosition().y - r.h / 2);
-
-    // SDL_RenderCopyEx(renderer, mTexture, nullptr, &r,
-    //     -Math::ToDegrees(mOwner->GetRotation()), nullptr,
-    //     SDL_FLIP_NONE
-    // );
 }
 
 void SpriteComponent::SetTexture(Texture* texture)
@@ -52,7 +46,4 @@ void SpriteComponent::SetTexture(Texture* texture)
     mTexture = texture;
 	mTexWidth = texture->GetWidth();
 	mTexHeight = texture->GetHeight();
-
-    // mTexture = texture;
-    // SDL_QueryTexture(texture, nullptr, nullptr, &mTexWidth, &mTexHeight);
 }

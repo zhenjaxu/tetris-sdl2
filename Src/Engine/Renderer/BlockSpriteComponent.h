@@ -3,7 +3,6 @@
 #include "Config.h"
 #include <memory>
 #include <vector>
-// #include <SDL2/SDL.h>
 
 class BlockSpriteComponent : SpriteComponent
 {

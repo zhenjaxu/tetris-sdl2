@@ -44,21 +44,4 @@ void BlockSpriteComponent::DrawBlocks(Shader* shader, const std::shared_ptr<std:
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
     }
-
-    // for(auto block: *blocks)
-    // {
-    //     if(block.blend) SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    //     else SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_NONE);
-
-    //     SDL_SetRenderDrawColor(renderer, block.color.r, block.color.g, block.color.b, block.color.a);
-
-    //     SDL_Rect rc = {
-    //         block.x,
-    //         block.y,
-    //         block.w,
-    //         block.h
-    //     };
-
-    //     SDL_RenderFillRect(renderer, &rc);
-    // }
 }

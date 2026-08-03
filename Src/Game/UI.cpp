@@ -26,32 +26,32 @@ std::shared_ptr<std::vector<Text>> UI::GetTexts()
     auto texts = std::make_shared<std::vector<Text>>();
 
     Text text;
-    text.color = RGBA{255, 255, 255, 255};
+    text.color = RGBA{0.0f, 0.0f, 0.0f, 1.0f};
 
     // 文字
-    text.x = Config::BOARD_WIDTH + 10;
+    text.x = Config::BOARD_WIDTH + 10 - Config::WINDOW_WIDTH / 2;
 
     text.content = "Next piece: ";
-    text.y = static_cast<int>(Config::BOARD_CELL * 1);
+    text.y = Config::WINDOW_HEIGHT / 2 - Config::BOARD_CELL * 1;
     texts->push_back(text);
 
     text.content = "Last score: ";
-    text.y = static_cast<int>(Config::BOARD_CELL * 6);
+    text.y = Config::WINDOW_HEIGHT / 2 - Config::BOARD_CELL * 6;
     texts->push_back(text);
 
     text.content = "Current score: ";
-    text.y = static_cast<int>(Config::BOARD_CELL * 8);
+    text.y = Config::WINDOW_HEIGHT / 2 - Config::BOARD_CELL * 8;
     texts->push_back(text);
 
     // 数字
-    text.x = Config::BOARD_WIDTH + 20;
+    text.x = Config::BOARD_WIDTH + 20 - Config::WINDOW_WIDTH / 2;
 
     text.content = std::to_string(mLastScore);
-    text.y = static_cast<int>(Config::BOARD_CELL * 7);
+    text.y = Config::WINDOW_HEIGHT / 2 - Config::BOARD_CELL * 7;
     texts->push_back(text);
 
     text.content = std::to_string(mScoreCount);
-    text.y = static_cast<int>(Config::BOARD_CELL * 9);
+    text.y = Config::WINDOW_HEIGHT / 2 - Config::BOARD_CELL * 9;
     texts->push_back(text);
 
     return texts;
